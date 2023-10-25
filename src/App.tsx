@@ -1,11 +1,29 @@
 import "./App.css";
-import Home from "./components/Home/Home";
-import Lesson from "./components/Lesson/Lesson";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { publicRoutes } from "./routes";
+import Layout from "./layouts";
+
 function App() {
   return (
-    <div className="h-full bg-[#f6f7fb]">
-      <Home />
-      <Lesson />
+    <div className="App">
+      <Router>
+        <Routes>
+          {publicRoutes.map((route, index) => {
+            const Page = route.element;
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+                }
+              />
+            );
+          })}
+        </Routes>
+      </Router>
     </div>
   );
 }
