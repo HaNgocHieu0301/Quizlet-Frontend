@@ -1,7 +1,12 @@
 import "./App.css";
-
+import Home from "./components/Home/Home";
+import Lesson from "./components/Lesson/Lesson";
 function App() {
-  return <h1 className="bg-slate-800 text-red-700">Test</h1>;
+  return (
+    <div className="h-full bg-[#f6f7fb]">
+      <Home />
+      <Lesson />
+    </div>
+  );
 }
-
 export default App;
