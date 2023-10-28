@@ -8,6 +8,7 @@ import {
   Input,
   DatePicker,
   Typography,
+  FormInstance,
 } from "antd";
 import { useState, useRef } from "react";
 import login from "~/assets/images/login.png";
@@ -19,7 +20,10 @@ function Auth() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [tab, setTab] = useState("1");
   const topRef = useRef<HTMLDivElement>(null);
+  const [loginForm] = Form.useForm();
+  const [registerForm] = Form.useForm();
 
+  //function
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -31,6 +35,20 @@ function Auth() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  function onFinish(value: JSON) {
+    console.log(value);
+  }
+
+  function isValidateInfo(form: FormInstance) {
+    for (const key in form.getFieldsValue()) {
+      if (!form.getFieldsValue()[key]) {
+        return false;
+      }
+    }
+
+    return !form.getFieldsError().filter(({ errors }) => errors.length).length;
+  }
 
   return (
     <>
@@ -104,6 +122,8 @@ function Auth() {
                     layout="vertical"
                     autoComplete="off"
                     autoCapitalize="off"
+                    onFinish={onFinish}
+                    form={registerForm}
                   >
                     <Form.Item
                       hasFeedback
@@ -167,11 +187,20 @@ function Auth() {
                         size="large"
                       />
                     </Form.Item>
+                    <Form.Item shouldUpdate className="mb-0">
+                      {() => (
+                        <Button
+                          size="large"
+                          block
+                          type="primary"
+                          htmlType="submit"
+                          disabled={!isValidateInfo(registerForm)}
+                        >
+                          Register
+                        </Button>
+                      )}
+                    </Form.Item>
                   </Form>
-
-                  <Button size="large" block type="primary" disabled>
-                    Register
-                  </Button>
 
                   <Button size="large" block onClick={() => setTab("2")}>
                     Already have account? Login
@@ -210,12 +239,13 @@ function Auth() {
                     layout="vertical"
                     autoComplete="off"
                     autoCapitalize="off"
+                    form={loginForm}
                   >
                     <Form.Item
                       hasFeedback
                       label="Email"
                       name="Email"
-                      validateDebounce={500}
+                      validateFirst
                       rules={[
                         {
                           required: true,
@@ -237,6 +267,7 @@ function Auth() {
                         {
                           required: true,
                           max: 20,
+                          min: 8,
                         },
                       ]}
                       className="font-semibold"
@@ -245,15 +276,25 @@ function Auth() {
                         placeholder="••••••••"
                         type="Password"
                         size="large"
+                        autoComplete="nope"
                       />
                     </Form.Item>
                     <Typography.Link>Forget your password ?</Typography.Link>
+
+                    <Form.Item shouldUpdate className="mt-2 mb-0">
+                      {() => (
+                        <Button
+                          size="large"
+                          block
+                          type="primary"
+                          htmlType="submit"
+                          disabled={!isValidateInfo(loginForm)}
+                        >
+                          Login
+                        </Button>
+                      )}
+                    </Form.Item>
                   </Form>
-
-                  <Button size="large" block type="primary" disabled>
-                    Login
-                  </Button>
-
                   <Button size="large" block onClick={() => setTab("1")}>
                     Do not have account? Register
                   </Button>

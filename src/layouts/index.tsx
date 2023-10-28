@@ -1,10 +1,13 @@
 import { ReactNode } from "react";
+import Header from "./header";
+import Footer from "./footer";
 
 function Layout({ children }: { children: ReactNode }) {
   return (
     <div>
-      <h1>Layout</h1>
+      <Header />
       {children}
+      <Footer />
     </div>
   );
 }
