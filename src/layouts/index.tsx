@@ -1,10 +1,14 @@
 import { ReactNode } from "react";
+import Header from "./header";
+import Footer from "./footer";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 function Layout({ children }: { children: ReactNode }) {
   return (
     <div>
-      <h1>Layout</h1>
+      <Header />
       {children}
+      <Footer />
     </div>
   );
 }

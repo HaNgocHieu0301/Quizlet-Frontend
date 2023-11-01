@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
-import Auth from "~/components/Auth";
+import Home from "~/pages/Home/Home";
+import Recover from "~/pages/Recover";
 
 type Route = {
   path: string;
@@ -9,7 +10,10 @@ type Route = {
 /**
  * Route can be accessed without logging
  */
-const publicRoutes: Route[] = [{ path: "/", element: Auth }];
+const publicRoutes: Route[] = [
+  { path: "/", element: Home },
+  { path: "/recover", element: Recover },
+];
 
 /**
  * Route can not be accessed without logging
