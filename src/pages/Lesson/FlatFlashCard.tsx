@@ -1,4 +1,4 @@
-import IconSvg from "../IconSvg";
+import IconSvg from "../../components/IconSvg";
 
 const FlatFlashCard = () => {
   return (
