@@ -8,16 +8,20 @@ const ReactCardFlipCustom = ({ flashcard }: { flashcard: Flashcard }) => {
     setIsFliped(!isFliped);
   }
   return (
-    <div className="h-[250px]">
-      <ReactCardFlip flipDirection="vertical" isFlipped={isFliped}>
-        <p className="h-[200px]" onClick={FlipCard}>
-          {flashcard.frontContent}
-        </p>
-        <p className="h-[200px]" onClick={FlipCard}>
-          {flashcard.backContent}
-        </p>
-      </ReactCardFlip>
-    </div>
+    <ReactCardFlip flipDirection="vertical" isFlipped={isFliped}>
+      <div
+        className=" shadow-sm shadow-slate-300 py-14 px-10 h-[350px] bg-white"
+        onClick={FlipCard}
+      >
+        {flashcard.term}
+      </div>
+      <div
+        className="shadow-sm shadow-slate-300 py-14 px-10 h-[350px]  bg-white"
+        onClick={FlipCard}
+      >
+        {flashcard.definition}
+      </div>
+    </ReactCardFlip>
   );
 };
 

@@ -6,6 +6,6 @@ module.exports = {
   },
   plugins: [],
   corePlugins: {
-    preflight: true, // <== disable this!
+    preflight: false, // <== disable this!
   },
 };

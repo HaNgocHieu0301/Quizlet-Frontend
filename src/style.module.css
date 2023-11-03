@@ -1,0 +1,18 @@
+.success {
+  background-color: green;
+  color: white;
+}
+
+.success:hover {
+  background-color: white;
+  color: green;
+  border-color: green;
+}
+
+.successI {
+  background-color: green !important;
+  color: white !important;
+}
+.ant-input-custom {
+  border: 4px solid #ffcd1f;
+}

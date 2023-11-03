@@ -20,3 +20,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* .ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+  border-color: #d9dde8;
+  color: #586380;
+} */
+
+/* .ant-upload-wrapper.ant-upload-picture-card-wrapper
+  .ant-upload.ant-upload-select,
+.ant-upload-wrapper.ant-upload-picture-circle-wrapper
+  .ant-upload.ant-upload-select {
+  width: 75px;
+  height: 50px;
+  border: 1px dashed black;
+} */

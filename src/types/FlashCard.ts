@@ -1,5 +1,6 @@
 export interface Flashcard {
   id: number;
-  frontContent: string;
-  backContent: string;
+  term: string;
+  definition: string;
+  isStarred: boolean;
 }
