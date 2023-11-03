@@ -1,7 +1,7 @@
 import { useState, createRef, useEffect } from "react";
 import LearningModeButton from "./LearningModeButton";
 import Icons from "../../assets/icons";
-import IconSvg from "../IconSvg";
+import IconSvg from "../../components/IconSvg";
 import FlatFlashCard from "./FlatFlashCard";
 import ReactCardFlipCustom from "./ReactCardFlipCustom";
 import { Flashcard } from "~/types/FlashCard";
