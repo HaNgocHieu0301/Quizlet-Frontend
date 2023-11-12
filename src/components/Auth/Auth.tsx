@@ -29,8 +29,10 @@ function Auth() {
   const closeModal = (infor: JSON, action?: number) => {
     handleCancel();
     if (action === 1) {
+      // Hiện from đăng nhập để điển usernam và dob
       subModalRef.current?.show(infor);
     } else if (action === 2) {
+      // Hiện form quên mật khẩu
       recoverRef.current?.show();
     }
   };
