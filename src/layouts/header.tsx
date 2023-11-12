@@ -5,7 +5,6 @@ import {
   faFileCirclePlus,
   faFolder,
   faGear,
-  faIdBadge,
   faMagnifyingGlass,
   faPaste,
   faPlus,
@@ -15,17 +14,37 @@ import {
 import debounce from "lodash/debounce";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FacebookProvider } from "react-facebook";
-import { useSelector } from "react-redux";
-import { checkLoginSelector } from "~/redux/selector";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import clsx from "clsx";
 
 import style from "./style.module.css";
-
+import { checkLoginSelector } from "~/redux/selector";
 import Auth from "~/components/Auth/Auth";
+import { useEffect } from "react";
+import AuthSlice from "~/components/Auth/AuthSlice";
 
 function Header() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        jwtDecode(token);
+        dispatch(AuthSlice.actions.login());
+      } catch (error) {
+        handlerLogout();
+      }
+    }
+  });
+
   function handleSearch() {
     console.log("searching...");
+  }
+
+  function handlerLogout() {
+    dispatch(AuthSlice.actions.logout());
+    localStorage.removeItem("token");
   }
 
   const auth = useSelector(checkLoginSelector);
@@ -85,7 +104,10 @@ function Header() {
                 <FontAwesomeIcon className="pr-2" icon={faGear} />
                 Setting
               </p>
-              <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
+              <p
+                className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300"
+                onClick={handlerLogout}
+              >
                 <FontAwesomeIcon className="pr-2" icon={faRightFromBracket} />
                 Log out
               </p>

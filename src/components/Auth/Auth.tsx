@@ -1,4 +1,4 @@
-import { Modal, Button, Tabs, ConfigProvider } from "antd";
+import { Modal, Button, Tabs, ConfigProvider, message } from "antd";
 import { useState, useRef } from "react";
 
 import loginImage from "~/assets/images/login.png";
@@ -16,6 +16,7 @@ function Auth() {
   const topRef = useRef<HTMLDivElement>(null);
   const subModalRef = useRef<subModalRef>(null);
   const recoverRef = useRef<subModalRef>(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   //function
   const showModal = () => {
@@ -37,8 +38,20 @@ function Auth() {
     }
   };
 
+  /**
+   * Hiện message đăng kí thành công
+   */
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Register successfully, now you can login",
+      duration: 5,
+    });
+  };
+
   return (
     <>
+      {contextHolder}
       <Button
         type="text"
         size="large"
@@ -108,6 +121,7 @@ function Auth() {
                 <Register
                   setTab={() => setTab("2")}
                   closeModal={closeModal}
+                  success={success}
                 ></Register>
               </TabPane>
               <TabPane tab="Login" key="2">

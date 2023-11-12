@@ -1,20 +1,15 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  FormInstance,
-  Input,
-  Modal,
-  Space,
-  message,
-} from "antd";
+import { Button, Form, FormInstance, Input, Modal, Space, message } from "antd";
+import axios from "axios";
 import { useState, useImperativeHandle, forwardRef } from "react";
+import { register } from "~/api/Auth";
+import { userInfo } from "~/type";
 
 function SubModal(props: any, ref: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [subModalForm] = Form.useForm();
   const [inforUser, setInforUser] = useState(Object);
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
     show(infor: JSON) {
@@ -23,16 +18,32 @@ function SubModal(props: any, ref: any) {
     },
   }));
 
-  function onFinish(value: any) {
-    value.Dob = value.Dob.$d.toString();
+  function onFinish(value: userInfo) {
+    setLoading(true);
     value.email = inforUser.email;
-    value.name = inforUser.name;
-    value.picture = inforUser.picture.data
-      ? inforUser.picture.data.url
-      : inforUser.picture;
-    console.log(value);
-    setIsModalOpen(false);
-    success();
+    value.password =
+      Math.floor(Math.random() * 1000) +
+      "Abcd@" +
+      Math.floor(Math.random() * 1000);
+    value.role = "student";
+    axios
+      .post(register, value)
+      .then((res) => {
+        setLoading(false);
+        setIsModalOpen(false);
+        success();
+      })
+      .catch((error: any) => {
+        if (error.response.data.message.includes("Username")) {
+          subModalForm.setFields([
+            {
+              name: "username",
+              errors: ["This username is already taken"],
+            },
+          ]);
+        }
+        setLoading(false);
+      });
   }
 
   function isValidateInfo(form: FormInstance) {
@@ -73,18 +84,8 @@ function SubModal(props: any, ref: any) {
           >
             <Form.Item
               hasFeedback
-              label="Date of birth"
-              name="Dob"
-              validateFirst
-              className="font-semibold"
-            >
-              <DatePicker size="large" format="DD/MM/YYYY" />
-            </Form.Item>
-
-            <Form.Item
-              hasFeedback
               label="Username"
-              name="Username"
+              name="username"
               validateFirst
               rules={[
                 {
@@ -103,6 +104,7 @@ function SubModal(props: any, ref: any) {
                   block
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   disabled={!isValidateInfo(subModalForm)}
                 >
                   Register
