@@ -7,8 +7,10 @@ export default createSlice({
   },
   reducers: {
     login: (state) => {
-      console.log(state);
       state.checkLogin = true;
+    },
+    logout: (state) => {
+      state.checkLogin = false;
     },
   },
 });

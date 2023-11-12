@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import Home from "~/pages/Home/Home";
+import Home from "~/pages/Home";
 import Recover from "~/pages/Recover";
 
 type Route = {

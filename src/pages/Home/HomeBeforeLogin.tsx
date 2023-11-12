@@ -5,7 +5,7 @@ import student1 from "~/assets/images/Home/student1.png";
 import student2 from "~/assets/images/Home/student2.png";
 import student3 from "~/assets/images/Home/student3.png";
 
-const Home = () => {
+const HomeBeforeLogin = () => {
   return (
     <div>
       <div
@@ -99,4 +99,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeBeforeLogin;

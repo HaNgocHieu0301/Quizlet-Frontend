@@ -15,6 +15,8 @@ import AuthSlice from "./AuthSlice";
 
 import google from "~/assets/images/google.png";
 import facebook from "~/assets/images/facebook.png";
+import { loginFacebookApi, loginGoogleApi, loginApi } from "~/api/Auth";
+import { useState } from "react";
 
 type Props = {
   setTab: Function;
@@ -25,28 +27,42 @@ function Login({ setTab, closeModal }: Props) {
   const { login, isLoading } = useLogin();
   const [loginForm] = Form.useForm();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   function onFinish(value: JSON) {
-    console.log(value);
-    closeModal();
-    loginForm.resetFields();
+    setLoading(true);
+    axios
+      .post(loginApi, value)
+      .then((res) => {
+        setLoading(false);
+        closeModal();
+        loginForm.resetFields();
+        localStorage.setItem("token", res.data.result.token);
+        dispatch(AuthSlice.actions.login());
+      })
+      .catch((error: any) => {
+        console.log(error);
+        loginForm.setFields([
+          {
+            name: "password",
+            errors: ["Username or password is incorrect!"],
+          },
+        ]);
+        setLoading(false);
+      });
   }
 
   const loginGoogle = useGoogleLogin({
     onSuccess: async (codeResponse) => {
       try {
-        const res = await axios.get(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${codeResponse.access_token}`,
-            },
-          }
-        );
-        console.log(res.data);
-        dispatch(AuthSlice.actions.login());
-        // kiểm tra xem tài khoản đã có chưa, nếu có rồi thì đăng nhập luôn, còn chưa có thì đăng kí
-        closeModal(res.data);
+        const res = await axios.get(loginGoogleApi + codeResponse.access_token);
+        if (res.data.result.token) {
+          closeModal(res.data, 3);
+          dispatch(AuthSlice.actions.login());
+          localStorage.setItem("token", res.data.result.token);
+        } else {
+          closeModal(res.data.result.user, 1);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -57,11 +73,14 @@ function Login({ setTab, closeModal }: Props) {
     try {
       const response = (await login({ scope: "email", rerequest: false }))
         .authResponse.accessToken;
-      const res = await axios.get(
-        `https://graph.facebook.com/me?fields=id,name,email,first_name,last_name,gender,picture&access_token=${response}`
-      );
-      console.log(res);
-      closeModal(res.data, 1);
+      const res = await axios.get(loginFacebookApi + response);
+      if (res.data.result.token) {
+        closeModal(res.data, 3);
+        dispatch(AuthSlice.actions.login());
+        localStorage.setItem("token", res.data.result.token);
+      } else {
+        closeModal(res.data.result.user, 1);
+      }
     } catch (error: any) {
       console.log(error.message);
     }
@@ -113,7 +132,7 @@ function Login({ setTab, closeModal }: Props) {
         <Form.Item
           hasFeedback
           label="Email"
-          name="Email"
+          name="email"
           validateFirst
           rules={[
             {
@@ -130,7 +149,7 @@ function Login({ setTab, closeModal }: Props) {
         <Form.Item
           hasFeedback
           label="Password"
-          name="Password"
+          name="password"
           validateFirst
           rules={[
             {
@@ -159,6 +178,7 @@ function Login({ setTab, closeModal }: Props) {
               block
               type="primary"
               htmlType="submit"
+              loading={loading}
               disabled={!isValidateInfo(loginForm)}
             >
               Login
