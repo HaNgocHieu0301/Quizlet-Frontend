@@ -10,6 +10,8 @@ import {
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useLogin } from "react-facebook";
+import { useDispatch } from "react-redux";
+import AuthSlice from "./AuthSlice";
 
 import google from "~/assets/images/google.png";
 import facebook from "~/assets/images/facebook.png";
@@ -22,6 +24,7 @@ type Props = {
 function Login({ setTab, closeModal }: Props) {
   const { login, isLoading } = useLogin();
   const [loginForm] = Form.useForm();
+  const dispatch = useDispatch();
 
   function onFinish(value: JSON) {
     console.log(value);
@@ -41,7 +44,9 @@ function Login({ setTab, closeModal }: Props) {
           }
         );
         console.log(res.data);
-        closeModal(res.data, 1);
+        dispatch(AuthSlice.actions.login());
+        // kiểm tra xem tài khoản đã có chưa, nếu có rồi thì đăng nhập luôn, còn chưa có thì đăng kí
+        closeModal(res.data);
       } catch (error) {
         console.log(error);
       }

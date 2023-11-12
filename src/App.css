@@ -35,6 +35,10 @@
   color: #61dafb;
 }
 
+.ant-tabs-nav {
+  padding: 0 12px;
+}
+
 .ant-tabs-nav::before {
   display: none;
 }

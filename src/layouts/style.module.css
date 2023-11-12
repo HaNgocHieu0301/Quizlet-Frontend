@@ -1,0 +1,19 @@
+.addModal,
+.accountModal {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    width: 150px;
+    background: white;
+    right: 0;
+    border-radius: 8px;
+    position: absolute;
+    overflow: hidden;
+    display: none;
+}
+
+.addBtn:hover .addModal {
+    display: block;
+}
+
+.accountBtn:hover .accountModal {
+    display: block;
+}
