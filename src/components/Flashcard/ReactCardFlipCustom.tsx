@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 
 const ReactCardFlipCustom = ({ flashcard }: { flashcard: Flashcard }) => {
   const [isFliped, setIsFliped] = useState(false);

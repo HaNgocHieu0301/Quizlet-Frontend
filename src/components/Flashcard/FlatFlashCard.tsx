@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import IconSvg from "../IconSvg";
 import { Button, ConfigProvider, Form, Input, Flex } from "antd";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import { Answer } from "~/types/Answer";
 import axios from "axios";
 import { UpdateQuestion, RemoveAnswerInQuestion } from "./QuestionFunctions";

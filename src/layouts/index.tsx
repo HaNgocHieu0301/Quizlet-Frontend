@@ -7,7 +7,7 @@ function Layout({ children }: { children: ReactNode }) {
   return (
     <div>
       <Header />
-      {children}
+      <div className="bg-gray-100">{children}</div>
       <Footer />
     </div>
   );

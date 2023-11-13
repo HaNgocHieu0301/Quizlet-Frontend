@@ -1,47 +1,75 @@
-import {
-  Button,
-  Divider,
-  Space,
-  Form,
-  DatePicker,
-  Input,
-  FormInstance,
-} from "antd";
+import { Button, Divider, Space, Form, Input, FormInstance } from "antd";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useLogin } from "react-facebook";
 
 import google from "~/assets/images/google.png";
 import facebook from "~/assets/images/facebook.png";
+import { register, loginGoogleApi, loginFacebookApi } from "~/api/Auth";
+import { userInfo } from "~/type";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import AuthSlice from "./AuthSlice";
 
 type Props = {
   setTab: Function;
   closeModal: Function;
+  success: Function;
 };
 
-function Register({ setTab, closeModal }: Props) {
+function Register({ setTab, closeModal, success }: Props) {
   const { login, isLoading } = useLogin();
+  const [loading, setLoading] = useState(false);
   const [registerForm] = Form.useForm();
+  const dispatch = useDispatch();
 
-  function onFinish(value: JSON) {
-    console.log(value);
-    closeModal(null, 3);
-    registerForm.resetFields();
+  /**
+   * Gửi form đi
+   * @param value dữ liệu đầu vào
+   */
+  function onFinish(value: userInfo) {
+    setLoading(true);
+    value.role = "student";
+    axios
+      .post(register, value)
+      .then((res) => {
+        setLoading(false);
+        registerForm.resetFields();
+        closeModal(null, 3);
+        success();
+      })
+      .catch((error: any) => {
+        if (error.response.data.message.includes("email")) {
+          registerForm.setFields([
+            {
+              name: "email",
+              errors: ["This email is already registered"],
+            },
+          ]);
+        }
+        if (error.response.data.message.includes("Username")) {
+          registerForm.setFields([
+            {
+              name: "username",
+              errors: ["This username is already taken"],
+            },
+          ]);
+        }
+        setLoading(false);
+      });
   }
 
   const loginGoogle = useGoogleLogin({
     onSuccess: async (codeResponse) => {
       try {
-        const res = await axios.get(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${codeResponse.access_token}`,
-            },
-          }
-        );
-        console.log(res.data);
-        closeModal(res.data, 1);
+        const res = await axios.get(loginGoogleApi + codeResponse.access_token);
+        if (res.data.result.token) {
+          closeModal(res.data, 3);
+          dispatch(AuthSlice.actions.login());
+          localStorage.setItem("token", res.data.result.token);
+        } else {
+          closeModal(res.data.result.user, 1);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -52,16 +80,24 @@ function Register({ setTab, closeModal }: Props) {
     try {
       const response = (await login({ scope: "email", rerequest: false }))
         .authResponse.accessToken;
-      const res = await axios.get(
-        `https://graph.facebook.com/me?fields=id,name,email,first_name,last_name,gender,picture&access_token=${response}`
-      );
-      console.log(res);
-      closeModal(res.data, 1);
+      const res = await axios.get(loginFacebookApi + response);
+      if (res.data.result.token) {
+        closeModal(res.data, 3);
+        dispatch(AuthSlice.actions.login());
+        localStorage.setItem("token", res.data.result.token);
+      } else {
+        closeModal(res.data.result.user, 1);
+      }
     } catch (error: any) {
       console.log(error.message);
     }
   }
 
+  /**
+   * Kiểm tra điểu kiện của form
+   * @param form
+   * @returns
+   */
   function isValidateInfo(form: FormInstance) {
     for (const key in form.getFieldsValue()) {
       if (!form.getFieldsValue()[key]) {
@@ -107,18 +143,8 @@ function Register({ setTab, closeModal }: Props) {
       >
         <Form.Item
           hasFeedback
-          label="Date of birth"
-          name="Dob"
-          validateFirst
-          className="font-semibold"
-        >
-          <DatePicker size="large" format="DD/MM/YYYY" />
-        </Form.Item>
-
-        <Form.Item
-          hasFeedback
           label="Email"
-          name="Email"
+          name="email"
           validateFirst
           rules={[
             {
@@ -135,12 +161,13 @@ function Register({ setTab, closeModal }: Props) {
         <Form.Item
           hasFeedback
           label="Username"
-          name="Username"
+          name="username"
           validateFirst
           rules={[
             {
               required: true,
               max: 20,
+              min: 6,
             },
           ]}
           className="font-semibold"
@@ -151,12 +178,17 @@ function Register({ setTab, closeModal }: Props) {
         <Form.Item
           hasFeedback
           label="Password"
-          name="Password"
+          name="password"
           validateFirst
           rules={[
             {
               required: true,
               max: 20,
+              pattern: new RegExp(
+                /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+              ),
+              message:
+                "Password must contain at least 1 uppercase letter, 1 number, and 1 special character",
             },
           ]}
           className="font-semibold"
@@ -166,6 +198,7 @@ function Register({ setTab, closeModal }: Props) {
         <Form.Item shouldUpdate className="mb-0">
           {() => (
             <Button
+              loading={loading}
               size="large"
               block
               type="primary"

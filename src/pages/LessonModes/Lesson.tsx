@@ -5,7 +5,7 @@ import Icons from "../../assets/icons";
 import IconSvg from "../../components/IconSvg";
 import FlatFlashCard from "../../components/Flashcard/FlatFlashCard";
 import ReactCardFlipCustom from "../../components/Flashcard/ReactCardFlipCustom";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import { Button, Carousel, ConfigProvider, Flex } from "antd";
 import { CarouselRef } from "antd/es/carousel";
 import OptionButtons from "../../components/Flashcard/OptionButtons";

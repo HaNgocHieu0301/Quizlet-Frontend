@@ -7,7 +7,7 @@ import Icons from "~/assets/icons";
 import { Carousel } from "antd";
 import ReactCardFlipCustom from "../../components/Flashcard/ReactCardFlipCustom";
 import { CarouselRef } from "antd/es/carousel";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import ModeHeader from "../../components/Flashcard/ModeHeader";
 import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
 import { useParams } from "react-router-dom";

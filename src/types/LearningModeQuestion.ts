@@ -1,5 +1,5 @@
 import { Answer } from "./Answer";
-import { Flashcard } from "./Flashcard";
+import { Flashcard } from "./FlashCard";
 export interface LearningModeQuestion extends Flashcard {
   numOfLearning: number;
 }

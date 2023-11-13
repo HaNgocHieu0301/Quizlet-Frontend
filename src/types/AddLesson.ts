@@ -1,4 +1,4 @@
-import { Flashcard } from "./Flashcard";
+import { Flashcard } from "./FlashCard";
 
 export interface AddLesson {
   title: string;
@@ -9,4 +9,5 @@ export interface AddLesson {
   folderId: number;
   rate: number;
   questions: Flashcard[];
+  userId: string;
 }
