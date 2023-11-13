@@ -3,13 +3,20 @@ import { Flex } from "antd";
 interface LearningModeButtonProps {
   title: string;
   iconName: string;
+  lessonId: number;
+  url: string;
 }
 
-const LearningModeButton = ({ title, iconName }: LearningModeButtonProps) => {
+const LearningModeButton = ({
+  title,
+  iconName,
+  lessonId,
+  url,
+}: LearningModeButtonProps) => {
   return (
     <div>
       <a
-        href="#Id"
+        href={url}
         className="flex flex-row gap-2 pl-4 pr-6 py-2 rounded-xl bg-white shadow-md shadow-gray-100 
         hover:shadow-gray-300 
         border-b-4

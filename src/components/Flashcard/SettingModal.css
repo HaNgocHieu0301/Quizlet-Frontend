@@ -1,0 +1,37 @@
+/* MyModal.css */
+.custom-modal .ant-modal-header {
+  background-color: #f0f2f5; /* Đặt màu nền của header */
+  text-align: center;
+}
+
+.custom-modal .ant-modal-title {
+  color: #333; /* Đặt màu chữ của tiêu đề */
+}
+
+.custom-modal .ant-modal-content {
+  border-radius: 8px; /* Bo góc cho modal */
+}
+
+.custom-modal .modal-content {
+  padding: 16px;
+}
+
+.custom-modal .modal-item {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal .modal-label {
+  flex: 1;
+}
+
+.custom-modal .ant-switch {
+  flex: 0;
+}
+
+.custom-modal .ant-select {
+  width: 100%;
+  flex: 0;
+}

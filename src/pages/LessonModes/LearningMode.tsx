@@ -1,9 +1,55 @@
+import { useState, createRef, useEffect } from "react";
 import { Flex, Button, Dropdown } from "antd";
 import Icons from "~/assets/icons";
-import IconSvg from "../IconSvg";
-import ModeHeader from "./ModeHeader";
+import IconSvg from "../../components/IconSvg";
+import ModeHeader from "../../components/Flashcard/ModeHeader";
+import { useParams } from "react-router-dom";
+import { Flashcard } from "~/types/Flashcard";
+import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
+import { LearningModeQuestion } from "~/types/LearningModeQuestion";
+import { Answer } from "~/types/Answer";
 
 const LearningMode = () => {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const lessonIdNum: number = parseInt(lessonId as string);
+  const [currentFlashcard, setCurrentFlashcard] =
+    useState<LearningModeQuestion>({
+      questionId: -1,
+      learningStatusId: 1,
+      term: "",
+      isStarred: false,
+      lessonId: 1,
+      numOfLearning: 1,
+      answers: [],
+    });
+  const [flashcards, setFlashcards] = useState<LearningModeQuestion[]>([]);
+
+  const checkAnswerHandler = (answer: Answer) => {
+    console.log("correct");
+    const index: number = flashcards.indexOf(currentFlashcard) + 1;
+    if (index < flashcards.length) {
+      flashcards[index].numOfLearning += 1;
+      setCurrentFlashcard(flashcards[index]);
+    } else if (index === flashcards.length) {
+      setCurrentFlashcard(flashcards[0]);
+    }
+  };
+  useEffect(() => {
+    if (flashcards.length === 0) {
+      fetchFlashcardsByLessonId(lessonIdNum).then((fetchedFlashcards) => {
+        if (Array.isArray(fetchedFlashcards)) {
+          const tmp = fetchedFlashcards.map((flashcard) => {
+            return SetLearningModeQuestion(flashcard);
+          });
+          setFlashcards(tmp);
+          setCurrentFlashcard(tmp[0]);
+        }
+      });
+    }
+    // if (flashcards.length > 0 && currentFlashcard.questionId === -1) {
+    //   setCurrentFlashcard(SetLearningModeQuestion(flashcards[0]));
+    // }
+  }, [lessonIdNum, flashcards]);
   return (
     <div className="bg-[#f6f7fb] w-full h-[100vh]">
       {/* <div className="ModeHeader bg-white">
@@ -116,19 +162,20 @@ const LearningMode = () => {
       <div className="Main w-full">
         <div className="p-6">
           <div className="bg-white rounded-lg max-w-[53rem] my-0 mx-auto shadow-lg">
+            {/* iterate throught flashcards */}
             <article className="flex flex-col gap-10 px-8 py-6">
               <Flex vertical className="mb-16">
                 <Flex>
                   <Flex gap="large" justify="center" align="center">
                     <span>Thuat ngu</span>
-                    <span className="bg-[#ffe8d8] rounded-3xl px-2 py-1">
+                    {/* <span className="bg-[#ffe8d8] rounded-3xl px-2 py-1">
                       <span>Hay thu lai lan nua</span>
-                    </span>
+                    </span> */}
                   </Flex>
                 </Flex>
                 <Flex>
                   <Flex>
-                    <h2>Canh tranh trong chu nghia tu ban</h2>
+                    <h2>{currentFlashcard?.term}</h2>
                   </Flex>
                 </Flex>
               </Flex>
@@ -138,29 +185,36 @@ const LearningMode = () => {
                 </Flex>
                 <div>
                   <div className="grid gap-6 grid-rows-2 grid-cols-2">
-                    <Button
-                      className="min-h-[60px] hover:border-black"
-                      size="large"
-                    >
-                      Tich luy tu ban
-                    </Button>
-                    <Button className="min-h-[60px]" size="large">
-                      Tich luy tu ban
-                    </Button>
-                    <Button className="min-h-[60px]" size="large">
-                      Tich luy tu ban
-                    </Button>
+                    {currentFlashcard?.answers.map((answer, index) => (
+                      <Button
+                        key={index}
+                        className="min-h-[60px] hover:border-black whitespace-normal break-words"
+                        size="large"
+                        onClick={() => checkAnswerHandler(answer)}
+                      >
+                        {answer.definition}
+                      </Button>
+                    ))}
                   </div>
                 </div>
               </div>
             </article>
           </div>
         </div>
-        M
       </div>
       <Icons />
     </div>
   );
 };
-
+const SetLearningModeQuestion = (flashcard: Flashcard) => {
+  return {
+    questionId: flashcard.questionId,
+    learningStatusId: flashcard.learningStatusId,
+    term: flashcard.term,
+    isStarred: flashcard.isStarred,
+    lessonId: flashcard.lessonId,
+    answers: flashcard.answers,
+    numOfLearning: 1,
+  };
+};
 export default LearningMode;

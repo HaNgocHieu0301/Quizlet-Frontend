@@ -1,7 +1,13 @@
 import { Button, ConfigProvider, Dropdown } from "antd";
+import { useParams } from "react-router-dom";
 // import Icons from "../../assets/icons";
 import IconSvg from "../IconSvg";
 const OptionButtons = () => {
+  const { lessonId } = useParams();
+  const lessonIdNum: number = parseInt(lessonId as string);
+  const goToEdit = () => {
+    window.location.href = "/Lesson/EditingMode/" + lessonIdNum;
+  };
   return (
     // bg: #f6f7fb
     // border: #d9dde8
@@ -31,6 +37,7 @@ const OptionButtons = () => {
         <Button
           size="large"
           icon={<IconSvg iconName="edit" fill="#586380" />}
+          onClick={goToEdit}
         />
         <Dropdown
           trigger={["click"]}

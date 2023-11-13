@@ -1,42 +1,22 @@
 // import { Layout, Flex, Button, Dropdown } from "antd";
-import { useState, createRef } from "react";
+import { useState, createRef, useEffect } from "react";
 import { Dropdown, Button, Flex } from "antd";
-import IconSvg from "../IconSvg";
+import IconSvg from "../../components/IconSvg";
 import Icons from "~/assets/icons";
 // const { Header, Content } = Layout;
 import { Carousel } from "antd";
-import ReactCardFlipCustom from "../Lesson/ReactCardFlipCustom";
+import ReactCardFlipCustom from "../../components/Flashcard/ReactCardFlipCustom";
 import { CarouselRef } from "antd/es/carousel";
-import { Flashcard } from "~/types/FlashCard";
-import ModeHeader from "./ModeHeader";
+import { Flashcard } from "~/types/Flashcard";
+import ModeHeader from "../../components/Flashcard/ModeHeader";
+import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
+import { useParams } from "react-router-dom";
 
-const flashcards: Array<Flashcard> = [
-  {
-    id: 1,
-    term: "1",
-    definition: "1",
-    isStarred: false,
-  },
-  {
-    id: 2,
-    term: "front content 2",
-    definition: "back content 2",
-    isStarred: false,
-  },
-  {
-    id: 3,
-    term: "front content 3",
-    definition: "back content 3",
-    isStarred: false,
-  },
-  {
-    id: 4,
-    term: "front content 4",
-    definition: "back content 4",
-    isStarred: false,
-  },
-];
 const FlashCardMode = () => {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const lessonIdNum: number = parseInt(lessonId as string);
+  const [flashcardsCst, setFlashcardsCst] = useState<Flashcard[]>([]);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const carouseRef = createRef<CarouselRef>();
@@ -48,6 +28,14 @@ const FlashCardMode = () => {
     }
   };
 
+  useEffect(() => {
+    fetchFlashcardsByLessonId(lessonIdNum).then((fetchedFlashcards) => {
+      if (Array.isArray(fetchedFlashcards)) {
+        setFlashcards(fetchedFlashcards);
+      }
+    });
+    // setFlashcards(tmp);
+  }, [flashcards]);
   return (
     <div className="bg-[#f6f7fb] w-full h-[100vh]">
       {/* <div className="sticky top-0 z-10 w-full flex items-center bg-white"> */}

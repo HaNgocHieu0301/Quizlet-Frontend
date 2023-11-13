@@ -1,6 +1,10 @@
+import { Answer } from "./Answer";
+
 export interface Flashcard {
-  id: number;
+  questionId: number;
+  learningStatusId: number;
   term: string;
-  definition: string;
   isStarred: boolean;
+  lessonId: number;
+  answers: Answer[];
 }

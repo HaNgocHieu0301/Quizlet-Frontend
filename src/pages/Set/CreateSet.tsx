@@ -1,85 +1,137 @@
-import ReactDOM from "react-dom";
-import React, { useState, useEffect, useRef } from "react";
-import IconSvg from "../IconSvg";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import IconSvg from "../../components/IconSvg";
 import Icons from "~/assets/icons";
-import { Button, Flex, Input } from "antd";
-import TermRow from "../Lesson/TermRow";
-import ImportModal from "./ImportModal";
-import { Flashcard } from "~/types/FlashCard";
-import { JsxElement } from "typescript";
-const flashcardsConstants: Array<Flashcard> = [
-  {
-    id: 1,
-    term: "1",
-    definition: "1",
-    isStarred: false,
-  },
-  {
-    id: 2,
-    term: "front content 2",
-    definition: "back content 2",
-    isStarred: false,
-  },
-  {
-    id: 3,
-    term: "front content 3",
-    definition: "back content 3",
-    isStarred: false,
-  },
-  {
-    id: 4,
-    term: "front content 4",
-    definition: "back content 4",
-    isStarred: false,
-  },
-];
+import { Button, Flex, Input, Form } from "antd";
+import TermRow from "../../components/Flashcard/TermRow";
+import ImportModal from "../../components/Flashcard/ImportModal";
+import axios from "axios";
+import { Answer } from "~/types/Answer";
+import { Flashcard } from "~/types/Flashcard";
+import { RemoveQuestion } from "~/components/Flashcard/QuestionFunctions";
+import { AddLesson } from "~/types/AddLesson";
 
-const EditingMode = () => {
+const CreateSet = () => {
   const [isFocusTitle, setIsFocusTitle] = useState(false);
   const [isFocusDescription, setIsFocusDescription] = useState(false);
   const [isOpenImportModal, setIsOpenImportModal] = useState(false);
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]); // [ [word, definition], [word, definition
-  const flashcardListRef = useRef<HTMLDivElement>(null);
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonDescription, setLessonDescription] = useState("");
+  const flashcardListRef = useRef<any>(null);
+  const flashcardFormRef = useRef<any>(null);
+
   const importedCallback = (lst: Flashcard[]) => {
-    for (let i = 0; i < lst.length; i++) {
-      lst[i].id = flashcards.length + 1 + i;
-    }
-    const tmp = flashcards.concat(lst);
+    const tmp = flashcards.concat(
+      lst.map((flashcard) => ({
+        ...flashcard,
+        questionId: 0,
+        lessonId: 0,
+        answers: flashcard.answers.map((answer) => ({
+          ...answer,
+          answerId: 0,
+          questionId: 0,
+          image: "",
+        })),
+      }))
+    );
     setIsOpenImportModal(false);
     setFlashcards(tmp);
   };
 
   const removeFlashcardCallback = (id: number) => {
-    const tmp = flashcards.filter((flashcard) => flashcard.id !== id);
+    const tmp = flashcards.filter((flashcard) => flashcard.questionId !== id);
     setFlashcards(tmp);
+    RemoveQuestion(id);
   };
 
   const swapTermAndDefinitionHandler = () => {
-    console.log("swap");
-    const tmp = flashcards.map((flashcard) => {
-      return {
-        id: flashcard.id,
-        term: flashcard.definition,
-        definition: flashcard.term,
-        isStarred: flashcard.isStarred,
-      };
-    });
-    console.log(tmp);
-    setFlashcards(tmp);
+    // console.log("swap");
+    // const tmp = flashcards.map((flashcard) => {
+    //   // for (let i = 1; i < flashcard.answers.length; i++) {
+    //   //   RemoveAnswerInQuestion(flashcard.answers[i].answerId, flashcard);
+    //   // }
+    //   const tmp2: Flashcard = {
+    //     ...flashcard,
+    //     term: flashcard.answers.map((answer) => answer.definition).join("\n"),
+    //     answers: [
+    //       {
+    //         answerId: flashcard.answers[0].answerId,
+    //         questionId: flashcard.questionId,
+    //         definition: flashcard.term,
+    //         image: "",
+    //       },
+    //     ],
+    //   };
+    //   return tmp2;
+    // });
+    // console.log(tmp);
+    // setFlashcards(tmp);
   };
 
   const addNewLineHandler = () => {
-    let tmp = [
-      ...flashcards,
-      { id: flashcards.length + 1, term: "", definition: "", isStarred: false },
-    ];
+    const fl: Flashcard = {
+      learningStatusId: 1,
+      lessonId: 0,
+      questionId: 0,
+      term: "",
+      answers: [{ definition: "", answerId: 0, image: "", questionId: 0 }],
+      isStarred: false,
+    };
+
+    let tmp = [...flashcards, fl];
     setFlashcards(tmp);
   };
-  useEffect(() => {
-    if (flashcards.length === 0) {
-      setFlashcards([...flashcardsConstants]);
+
+  const handleSubmitForm = async () => {
+    try {
+      const data: Flashcard[] = flashcardListRef.current.getValue();
+      console.log(data);
+      const Questions: Flashcard[] = [];
+      data.forEach((element: Flashcard) => {
+        Questions.push({
+          questionId: element.questionId,
+          learningStatusId: element.learningStatusId,
+          term: element.term,
+          isStarred: element.isStarred,
+          lessonId: 0,
+          answers: element.answers,
+        });
+      });
+      const Lesson: AddLesson = {
+        title: lessonTitle,
+        description: lessonDescription,
+        createAt: new Date(),
+        modifiedAt: new Date(),
+        visibleId: 1,
+        folderId: 1,
+        rate: 0,
+        questions: Questions,
+      };
+      const lessonJson = JSON.stringify(Lesson);
+      console.log(lessonJson);
+      const response = await axios.post(
+        "http://localhost:5219/api/Lessons/AddLessonWithQuestions",
+        lessonJson,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+      if (response.status >= 200 && response.status < 300) {
+        // window.location.href = "/lesson/" + lessonIdNum;
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, [flashcards]);
+  };
 
   return (
     <>
@@ -105,7 +157,11 @@ const EditingMode = () => {
                         </Flex>
                       </Flex>
                       <div>
-                        <Button size="middle" type="primary">
+                        <Button
+                          size="middle"
+                          type="primary"
+                          onClick={handleSubmitForm}
+                        >
                           <span>Hoan Tat</span>
                         </Button>
                       </div>
@@ -127,11 +183,12 @@ const EditingMode = () => {
                   >
                     <div className="w-full">
                       <Input
-                        defaultValue="MLN111 tong hop"
+                        value={lessonTitle}
                         bordered={false}
                         className="p-0"
                         onFocus={() => setIsFocusTitle(true)}
                         onBlur={() => setIsFocusTitle(false)}
+                        onChange={(e) => setLessonTitle(e.target.value)}
                       />
                       <hr
                         className={
@@ -154,11 +211,12 @@ const EditingMode = () => {
                   >
                     <div className="w-full">
                       <Input
-                        defaultValue="Mo ta hoc phan"
+                        value={lessonDescription}
                         bordered={false}
                         className="p-0"
                         onFocus={() => setIsFocusDescription(true)}
                         onBlur={() => setIsFocusDescription(false)}
+                        onChange={(e) => setLessonDescription(e.target.value)}
                       />
                       <hr
                         className={
@@ -218,20 +276,15 @@ const EditingMode = () => {
               <Flex className="UIContainer mx-auto max-w-[81.25em] px-10">
                 <div className="py-6">
                   <div className="StudiableItems">
-                    <div ref={flashcardListRef}>
-                      {flashcards.map((flashcard, index) => (
-                        <TermRow
-                          index={index + 1}
-                          flashcard={{
-                            id: flashcard.id,
-                            term: flashcard.term,
-                            definition: flashcard.definition,
-                            isStarred: false,
-                          }}
+                    <Form ref={flashcardFormRef}>
+                      <Form.Item name="flashcards">
+                        <FlashcardControl
+                          ref={flashcardListRef}
+                          flashcards={flashcards}
                           removeCallback={removeFlashcardCallback}
                         />
-                      ))}
-                    </div>
+                      </Form.Item>
+                    </Form>
                   </div>
                 </div>
               </Flex>
@@ -261,5 +314,62 @@ const EditingMode = () => {
     </>
   );
 };
+const FlashcardControl = forwardRef<any, any>(
+  ({ flashcards, removeCallback }, ref) => {
+    const [localFlashcards, setLocalFlashcards] =
+      useState<Flashcard[]>(flashcards);
+    useEffect(() => {
+      console.log("FlashcardControlEffect");
+      console.log(flashcards);
+      setLocalFlashcards(flashcards);
+      console.log(localFlashcards);
+    }, [flashcards]);
 
-export default EditingMode;
+    useImperativeHandle(ref, () => ({
+      getValue: () => {
+        return localFlashcards;
+      },
+    }));
+
+    const updateFlashcard = (id: number, updatedFields: any) => {
+      console.log("Update Flashcard");
+      console.log(JSON.stringify(updatedFields));
+      const updatedFlashcards = localFlashcards.map((flashcard: Flashcard) =>
+        flashcard.questionId === id
+          ? {
+              ...flashcard,
+              isStarred: updatedFields.isStarred,
+              term: updatedFields.term,
+              answers: updatedFields.answers.map(
+                (answer: Answer, index: number) => ({
+                  ...answer,
+                  image: "",
+                  questionId: flashcard.questionId,
+                  definition: answer.definition,
+                })
+              ),
+            }
+          : flashcard
+      );
+      console.log("Updated Flashcard");
+      console.log(updatedFlashcards);
+      setLocalFlashcards(updatedFlashcards);
+    };
+    return (
+      <>
+        {localFlashcards.map((flashcard: Flashcard, index: number) => (
+          <TermRow
+            key={index}
+            index={index + 1}
+            flashcard={flashcard}
+            removeCallback={removeCallback}
+            updateCallback={(updatedFields: any) =>
+              updateFlashcard(flashcard.questionId, updatedFields)
+            }
+          />
+        ))}
+      </>
+    );
+  }
+);
+export default CreateSet;

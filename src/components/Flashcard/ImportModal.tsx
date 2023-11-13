@@ -1,6 +1,6 @@
 import { Button, Flex, Form, Input, Radio, ConfigProvider, Modal } from "antd";
 import { useState, useRef, useEffect } from "react";
-import { Flashcard } from "~/types/FlashCard";
+import { Flashcard } from "~/types/Flashcard";
 const { TextArea } = Input;
 
 const ImportModal = ({
@@ -209,7 +209,12 @@ const FlashCardPreview = ({
           </span>
         </div>
         <div className="cursor-text table-cell w-1/2 align-top pt-3 pl-5 pr-3">
-          {flashcard.definition}
+          {flashcard.answers.map((answer, index) => (
+            <>
+              <span key={index}>{answer.definition}</span>
+              <br />
+            </>
+          ))}
           <hr />
           <span>Định nghĩa</span>
         </div>
@@ -230,9 +235,13 @@ const SplitFlashcard = (str: string, inside: string, between: string) => {
     // Tách từ thành mảng con chứa thuật ngữ và định nghĩa bằng s1
     const parts = word.split(inside);
     var flashcard: Flashcard = {
-      id: 1,
+      learningStatusId: 1,
+      questionId: 1,
       term: parts[0],
-      definition: parts[1],
+      answers: [
+        { image: "", definition: parts[1], questionId: 1, answerId: 1 },
+      ],
+      lessonId: 1,
       isStarred: false,
     };
     // Thêm mảng con vào mảng kết quả

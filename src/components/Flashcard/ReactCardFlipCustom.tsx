@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
-import { Flashcard } from "~/types/FlashCard";
+import { Flashcard } from "~/types/Flashcard";
 
 const ReactCardFlipCustom = ({ flashcard }: { flashcard: Flashcard }) => {
   const [isFliped, setIsFliped] = useState(false);
@@ -15,12 +15,12 @@ const ReactCardFlipCustom = ({ flashcard }: { flashcard: Flashcard }) => {
       >
         {flashcard.term}
       </div>
-      <div
-        className="shadow-sm shadow-slate-300 py-14 px-10 h-[350px]  bg-white"
+      <p
+        className="whitespace-pre-wrap shadow-sm shadow-slate-300 py-14 px-10 h-[350px] bg-white"
         onClick={FlipCard}
       >
-        {flashcard.definition}
-      </div>
+        {flashcard.answers.map((answer) => answer.definition).join("\n")}
+      </p>
     </ReactCardFlip>
   );
 };
