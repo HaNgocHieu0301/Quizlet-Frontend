@@ -14,7 +14,7 @@ import axios from "axios";
 import { Answer } from "~/types/Answer";
 import { Flashcard } from "~/types/FlashCard";
 import { RemoveQuestion } from "~/components/Flashcard/QuestionFunctions";
-import { AddLesson } from "~/types/AddLesson";
+import { AddAndUpdateLesson } from "~/types/AddAndUpdateLesson";
 import { jwtDecode } from "jwt-decode";
 
 const CreateSet = () => {
@@ -126,7 +126,8 @@ const CreateSet = () => {
           answers: element.answers,
         });
       });
-      const Lesson: AddLesson = {
+      const Lesson: AddAndUpdateLesson = {
+        lessonId: 0,
         title: lessonTitle,
         description: lessonDescription,
         createAt: new Date(),
@@ -156,14 +157,30 @@ const CreateSet = () => {
       console.log(error);
     }
   };
-
+  const TestForget = async () => {
+    const email = "hieuhn0301@gmail.com";
+    const json = JSON.stringify(email);
+    console.log(json);
+    axios
+      .post("http://localhost:5271/api/AuthAPI/forgot-password", json, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <>
       <main className="w-full">
         <div className="CreateSetPage">
           <div className="px-20 py-8">
             <Flex className="mb-4" align="center" justify="space-between">
-              <h1>Create a new study set</h1>
+              <h1 onClick={TestForget}>Create a new study set</h1>
               <Button size="large" type="primary" onClick={handleSubmitForm}>
                 Create
               </Button>

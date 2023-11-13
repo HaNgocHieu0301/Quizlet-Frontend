@@ -1,6 +1,7 @@
 import { Flashcard } from "./FlashCard";
 
-export interface AddLesson {
+export interface AddAndUpdateLesson {
+  lessonId: number;
   title: string;
   description: string;
   createAt: Date;

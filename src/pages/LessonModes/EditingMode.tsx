@@ -20,6 +20,8 @@ import {
   fetchFlashcardsByLessonId,
 } from "~/components/Flashcard/QuestionFunctions";
 import { useParams } from "react-router-dom";
+import { AddAndUpdateLesson } from "~/types/AddAndUpdateLesson";
+import { jwtDecode } from "jwt-decode";
 
 const EditingMode = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -30,11 +32,20 @@ const EditingMode = () => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]); // [ [word, definition], [word, definition
   const flashcardListRef = useRef<any>(null);
   const flashcardFormRef = useRef<any>(null);
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonDescription, setLessonDescription] = useState("");
+
+  useEffect(() => {
+    if (flashcards.length <= 0) {
+      fetchFlashcardsByLessonId(lessonIdNum).then((fetchedFlashcards) => {
+        if (Array.isArray(fetchedFlashcards)) {
+          setFlashcards(fetchedFlashcards);
+        }
+      });
+    }
+  }, [lessonIdNum]);
 
   const importedCallback = (lst: Flashcard[]) => {
-    // for (let i = 0; i < lst.length; i++) {
-    //   lst[i].questionId = 0;
-    // }
     const tmp = flashcards.concat(
       lst.map((flashcard) => ({
         ...flashcard,
@@ -52,10 +63,16 @@ const EditingMode = () => {
     setFlashcards(tmp);
   };
 
-  const removeFlashcardCallback = (id: number) => {
-    const tmp = flashcards.filter((flashcard) => flashcard.questionId !== id);
-    setFlashcards(tmp);
-    RemoveQuestion(id);
+  const removeCallback = (index: number) => {
+    flashcards.splice(index, 1);
+    setFlashcards((flashcards) => [...flashcards]);
+  };
+
+  const updateCallback = (index: number, updatedFields: any) => {
+    flashcards[index] = {
+      ...updatedFields,
+    };
+    setFlashcards((flashcards) => [...flashcards]);
   };
 
   const swapTermAndDefinitionHandler = () => {
@@ -111,11 +128,23 @@ const EditingMode = () => {
           answers: element.answers,
         });
       });
-      const QuestionsJson = JSON.stringify(Questions);
-      console.log(QuestionsJson);
+      const Lesson: AddAndUpdateLesson = {
+        lessonId: lessonIdNum,
+        title: lessonTitle,
+        description: lessonDescription,
+        createAt: new Date(),
+        modifiedAt: new Date(),
+        visibleId: 1,
+        folderId: 1,
+        rate: 0,
+        userId: jwtDecode(localStorage.getItem("token") || "").sub || "",
+        questions: Questions,
+      };
+      const lessonJson = JSON.stringify(Lesson);
+      console.log(lessonJson);
       const response = await axios.put(
-        "http://localhost:5219/api/Questions/UpdateQuestions",
-        QuestionsJson,
+        "http://localhost:5219/api/Lessons/UpdateLesson",
+        lessonJson,
         {
           headers: {
             "Content-Type": "application/json",
@@ -130,17 +159,6 @@ const EditingMode = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (flashcards.length <= 0) {
-      console.log("fetchData");
-      fetchFlashcardsByLessonId(lessonIdNum).then((fetchedFlashcards) => {
-        if (Array.isArray(fetchedFlashcards)) {
-          setFlashcards(fetchedFlashcards);
-        }
-      });
-    }
-  }, [lessonIdNum]);
 
   return (
     <>
@@ -197,6 +215,7 @@ const EditingMode = () => {
                         className="p-0"
                         onFocus={() => setIsFocusTitle(true)}
                         onBlur={() => setIsFocusTitle(false)}
+                        onChange={(e) => setLessonTitle(e.target.value)}
                       />
                       <hr
                         className={
@@ -224,6 +243,7 @@ const EditingMode = () => {
                         className="p-0"
                         onFocus={() => setIsFocusDescription(true)}
                         onBlur={() => setIsFocusDescription(false)}
+                        onChange={(e) => setLessonDescription(e.target.value)}
                       />
                       <hr
                         className={
@@ -288,7 +308,8 @@ const EditingMode = () => {
                         <FlashcardControl
                           ref={flashcardListRef}
                           flashcards={flashcards}
-                          removeCallback={removeFlashcardCallback}
+                          removeCallback={removeCallback}
+                          updateCallback={updateCallback}
                         />
                       </Form.Item>
                     </Form>
@@ -322,7 +343,7 @@ const EditingMode = () => {
   );
 };
 const FlashcardControl = forwardRef<any, any>(
-  ({ flashcards, removeCallback }, ref) => {
+  ({ flashcards, removeCallback, updateCallback }, ref) => {
     const [localFlashcards, setLocalFlashcards] =
       useState<Flashcard[]>(flashcards);
     useEffect(() => {
@@ -338,29 +359,21 @@ const FlashcardControl = forwardRef<any, any>(
       },
     }));
 
-    const updateFlashcard = (id: number, updatedFields: any) => {
-      console.log("Update Flashcard");
-      console.log(JSON.stringify(updatedFields));
-      const updatedFlashcards = localFlashcards.map((flashcard: Flashcard) =>
-        flashcard.questionId === id
-          ? {
-              ...flashcard,
-              isStarred: updatedFields.isStarred,
-              term: updatedFields.term,
-              answers: updatedFields.answers.map(
-                (answer: Answer, index: number) => ({
-                  ...answer,
-                  image: "",
-                  questionId: flashcard.questionId,
-                  definition: answer.definition,
-                })
-              ),
-            }
-          : flashcard
-      );
-      console.log("Updated Flashcard");
-      console.log(updatedFlashcards);
-      setLocalFlashcards(updatedFlashcards);
+    const removeFlashcardCallback = (index: number) => {
+      // localFlashcards.splice(index, 1);
+      // setLocalFlashcards((localFlashcards) => [...localFlashcards]);
+      console.log(localFlashcards);
+
+      removeCallback(index);
+    };
+
+    const updateFlashcard = (index: number, updatedFields: any) => {
+      // localFlashcards[index] = {
+      //   ...updatedFields,
+      // };
+      // console.log(localFlashcards[index]);
+      // setLocalFlashcards((localFlashcards) => [...localFlashcards]);
+      updateCallback(index, updatedFields);
     };
     return (
       <>
@@ -369,9 +382,9 @@ const FlashcardControl = forwardRef<any, any>(
             key={index}
             index={index + 1}
             flashcard={flashcard}
-            removeCallback={removeCallback}
+            removeCallback={() => removeFlashcardCallback(index)}
             updateCallback={(updatedFields: any) =>
-              updateFlashcard(flashcard.questionId, updatedFields)
+              updateFlashcard(index, updatedFields)
             }
           />
         ))}

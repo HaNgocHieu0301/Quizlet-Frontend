@@ -36,13 +36,21 @@ const Lesson = () => {
    * @param updatedFlashcard
    */
   const updateFlashcardCallback = (updatedFlashcard: Flashcard) => {
+    console.log("updateFlashcardCallback");
     console.log(updatedFlashcard);
     const updatedFlashcards = flashcards.map((flashcard) =>
       flashcard.questionId === updatedFlashcard.questionId
         ? updatedFlashcard
         : flashcard
     );
-    setFlashcards(updatedFlashcards);
+    var tmp = flashcards.find(
+      (flashcard) => flashcard.questionId === updatedFlashcard.questionId
+    );
+    if (tmp !== undefined) {
+      tmp.isStarred = updatedFlashcard.isStarred;
+      console.log(flashcards);
+    }
+    setFlashcards((flashcards) => [...updatedFlashcards]);
   };
   const ChangeToStarredFlashcards = () => {
     const starredFlashcards = flashcards.filter((o) => o.isStarred);

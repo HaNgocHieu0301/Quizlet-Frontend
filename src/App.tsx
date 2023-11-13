@@ -8,6 +8,12 @@ import AuthRequire from "./components/Auth/Middleware";
 function App() {
   return (
     <div className="App">
+      {/* <AuthProvider
+        authType="cookie"
+        authName="_auth"
+        cookieDomain={window.location.hostname}
+        cookieSecure={false}
+      > */}
       <Router>
         <Routes>
           {publicRoutes.map((route, index) => {
@@ -19,7 +25,9 @@ function App() {
                 element={
                   route.auth ? (
                     <Layout>
+                      {/* <RequireAuth loginPath="/"> */}
                       <Page />
+                      {/* </RequireAuth> */}
                     </Layout>
                   ) : (
                     <Layout>
@@ -32,6 +40,7 @@ function App() {
           })}
         </Routes>
       </Router>
+      {/* </AuthProvider> */}
     </div>
   );
 }

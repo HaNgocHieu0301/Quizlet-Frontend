@@ -21,7 +21,9 @@ const FlatFlashCard = ({
 
   const starredHandler = (fc: Flashcard) => {
     const updatedValue = { ...fc, isStarred: !fc.isStarred };
-    UpdateQuestion(updatedValue, updateFlashcardCallback);
+    UpdateQuestion(updatedValue).then((updatedValue) => {
+      updateFlashcardCallback(updatedValue);
+    });
   };
 
   const buttonEditHandler = (event: any) => {
@@ -48,7 +50,9 @@ const FlatFlashCard = ({
       term: term,
       answers: updatedAnswers,
     };
-    UpdateQuestion(updatedValue, updateFlashcardCallback);
+    UpdateQuestion(updatedValue).then((updatedValue) => {
+      updateFlashcardCallback(updatedValue);
+    });
     setIsEditing(false);
   };
   // Hàm để xử lý remove 1 answer khi o che do edit
