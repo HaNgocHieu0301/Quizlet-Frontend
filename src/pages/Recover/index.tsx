@@ -1,11 +1,33 @@
 import { Button, Form, FormInstance, Input } from "antd";
+import axios from "axios";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { changePasswordApi } from "~/api/Auth";
 import changePassword from "~/assets/images/changePassword.png";
+import { useState } from "react";
 
 function Recover() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [recoverForm] = Form.useForm();
 
-  function onFinish(value: JSON) {
-    console.log(value);
+  function onFinish(value: any) {
+    setLoading(true);
+    const data = {
+      email: searchParams.get("email"),
+      token: searchParams.get("token"),
+      newPassword: value.Password,
+    };
+    const json = JSON.stringify(data);
+    axios
+      .post(changePasswordApi, json, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        setLoading(false);
+        navigate("/");
+      });
   }
 
   function isValidateInfo(form: FormInstance) {
@@ -43,6 +65,11 @@ function Recover() {
                 required: true,
                 min: 6,
                 max: 20,
+                pattern: new RegExp(
+                  /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+                ),
+                message:
+                  "Contain at least 1 uppercase letter, 1 number, and 1 special character",
               },
             ]}
             className="font-semibold"
@@ -57,6 +84,7 @@ function Recover() {
                 type="primary"
                 htmlType="submit"
                 disabled={!isValidateInfo(recoverForm)}
+                loading={loading}
               >
                 Submit
               </Button>

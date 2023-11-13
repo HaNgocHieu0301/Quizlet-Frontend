@@ -2,7 +2,8 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { publicRoutes } from "./routes";
 import Layout from "./layouts";
-import { AuthProvider, RequireAuth } from "react-auth-kit";
+import { jwtDecode } from "jwt-decode";
+import AuthRequire from "./components/Auth/Middleware";
 
 function App() {
   return (

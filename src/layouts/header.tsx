@@ -25,11 +25,16 @@ import { checkLoginSelector } from "~/redux/selector";
 import Auth from "~/components/Auth/Auth";
 import { useEffect } from "react";
 import AuthSlice from "~/components/Auth/AuthSlice";
+import axios from "axios";
+import { getFlashCards } from "~/api/FlashCard";
+import { useState } from "react";
+import { Lesson } from "~/type";
 
 function Header() {
   const dispatch = useDispatch();
   // const signOut = useSignOut();
   const navigate = useNavigate();
+  const [serachList, setSearchList] = useState<Lesson[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -44,8 +49,19 @@ function Header() {
     }
   });
 
-  function handleSearch() {
-    console.log("searching...");
+  function handleSearch(e: any) {
+    if (e.target.value) {
+      axios
+        .get(getFlashCards + `?$filter=contains(title, '${e.target.value}')`)
+        .then((res) => {
+          setSearchList(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setSearchList([]);
+    }
   }
 
   function handlerLogout() {
@@ -65,13 +81,32 @@ function Header() {
       <h2 className="text-blue-600 cursor-pointer">Quizlet</h2>
       <HeaderLink title="Home" url="/"></HeaderLink>
       <HeaderLink title="Your library" icon showModal></HeaderLink>
-      <Input
-        allowClear
-        className="rounded-3xl flex-1 h-[36px]"
-        onChange={debounce(handleSearch, 500)}
-        prefix={<FontAwesomeIcon size="sm" icon={faMagnifyingGlass} />}
-        placeholder="Text sets, books, questions"
-      ></Input>
+      <div className="flex-1 relative">
+        <Input
+          allowClear
+          className="rounded-3xl h-[36px]"
+          onChange={debounce(handleSearch, 500)}
+          prefix={<FontAwesomeIcon size="sm" icon={faMagnifyingGlass} />}
+          placeholder="Text sets, books, questions"
+        ></Input>
+        <div className="max-h-40 mt-1 w-full bg-white overflow-auto rounded-lg shadow-md absolute">
+          {serachList.map((flashcard, index) => (
+            <p
+              key={index}
+              className="text-start w-full px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300"
+            >
+              <FontAwesomeIcon className="pr-2" icon={faMagnifyingGlass} />
+              <Link
+                className="pr-96 no-underline text-gray-600"
+                to={`/Lesson/${flashcard.lessonId}`}
+              >
+                {flashcard.title}
+              </Link>
+            </p>
+          ))}
+        </div>
+      </div>
+
       <div className={clsx(style.addBtn, "relative")}>
         <Button
           type="primary"

@@ -188,7 +188,7 @@ function Register({ setTab, closeModal, success }: Props) {
                 /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
               ),
               message:
-                "Password must contain at least 1 uppercase letter, 1 number, and 1 special character",
+                "Contain at least 1 uppercase letter, 1 number, and 1 special character",
             },
           ]}
           className="font-semibold"

@@ -1,5 +1,5 @@
 import { useState, createRef, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import LearningModeButton from "../../components/Flashcard/LearningModeButton";
 import Icons from "../../assets/icons";
 import IconSvg from "../../components/IconSvg";
@@ -81,7 +81,7 @@ const Lesson = () => {
   }, [flashcards, lessonId]);
   return (
     <>
-      <div className="w-full">
+      <div className="w-full pb-8">
         <div className="bg-[#f6f7fb] max-w-[50rem] mx-auto my-0 px-10 pt-6">
           <div className="Intro">
             <div className="Title flex flex-col gap-2 mb-4">
@@ -295,13 +295,6 @@ const Lesson = () => {
                     updateFlashcardCallback={updateFlashcardCallback}
                   />
                 ))}
-                <div>
-                  {flashcards.length === flashcards.length ? null : (
-                    <Button type="primary" size="large" className="w-full">
-                      Xem thêm
-                    </Button>
-                  )}
-                </div>
               </div>
               <div className="">
                 <ConfigProvider
@@ -316,14 +309,20 @@ const Lesson = () => {
                     },
                   }}
                 >
-                  <Button type="primary" size="large" className="py-6 h-[60px]">
-                    <a
-                      href={`/Lesson/EditingMode/${lessonIdNum}`}
-                      className="text-lg"
+                  {flashcards.length > 50 && (
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="py-6 h-[60px]"
                     >
-                      Thêm hoặc xóa thuật ngữ
-                    </a>
-                  </Button>
+                      <Link
+                        to={`/Lesson/EditingMode/${lessonIdNum}`}
+                        className="text-lg"
+                      >
+                        Xem thêm
+                      </Link>
+                    </Button>
+                  )}
                 </ConfigProvider>
               </div>
             </div>

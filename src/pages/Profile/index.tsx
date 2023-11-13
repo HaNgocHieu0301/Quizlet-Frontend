@@ -16,13 +16,16 @@ function Profile() {
   const [flashCards, setFlashcards] = useState<Lesson[]>([]);
 
   useEffect(() => {
-    const jwt = jwtDecode(localStorage.getItem("token") || "");
-    axios
-      .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
-      .then((res) => {
-        setFlashcards(res.data);
-      })
-      .catch();
+    const token = localStorage.getItem("token");
+    if (token) {
+      const jwt = jwtDecode(token);
+      axios
+        .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+        .then((res) => {
+          setFlashcards(res.data);
+        })
+        .catch();
+    }
   }, []);
 
   const handleChange = (value: string) => {
