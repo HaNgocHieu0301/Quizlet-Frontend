@@ -11,7 +11,6 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useLogin } from "react-facebook";
 import { useDispatch } from "react-redux";
-import { useSignIn } from "react-auth-kit";
 
 import AuthSlice from "./AuthSlice";
 import google from "~/assets/images/google.png";
@@ -29,7 +28,6 @@ function Login({ setTab, closeModal }: Props) {
   const [loginForm] = Form.useForm();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const signIn = useSignIn();
 
   function onFinish(value: JSON) {
     setLoading(true);
@@ -62,12 +60,6 @@ function Login({ setTab, closeModal }: Props) {
           closeModal(res.data, 3);
           dispatch(AuthSlice.actions.login());
           localStorage.setItem("token", res.data.result.token);
-          signIn({
-            token: res.data.result.token,
-            expiresIn: 3600,
-            tokenType: "Bearer",
-            authState: { id: res.data.result.user.id },
-          });
         } else {
           closeModal(res.data.result.user, 1);
         }

@@ -1,10 +1,13 @@
 import { message, Button, Form, FormInstance, Input, Modal } from "antd";
+import axios from "axios";
 import { useState, forwardRef, useImperativeHandle } from "react";
+import { checkEmailExist, forgetPassword } from "~/api/Auth";
 
 function Recover(props: any, ref: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recoverForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -20,10 +23,31 @@ function Recover(props: any, ref: any) {
     });
   };
 
-  function onFinish(value: JSON) {
-    console.log(value);
-    success();
-    setIsModalOpen(false);
+  function onFinish(value: { Email: string }) {
+    const json = JSON.stringify(value.Email);
+    setLoading(true);
+    axios
+      .post("http://localhost:5271/api/AuthAPI/forgot-password", json, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        success();
+        setIsModalOpen(false);
+        recoverForm.resetFields();
+        setLoading(false);
+      })
+      .catch((err) => {
+        recoverForm.setFields([
+          {
+            name: "Email",
+            errors: ["Email is not exist"],
+          },
+        ]);
+        setLoading(false);
+      });
   }
 
   function isValidateInfo(form: FormInstance) {
@@ -86,6 +110,7 @@ function Recover(props: any, ref: any) {
                   type="primary"
                   htmlType="submit"
                   disabled={!isValidateInfo(recoverForm)}
+                  loading={loading}
                 >
                   Submit
                 </Button>

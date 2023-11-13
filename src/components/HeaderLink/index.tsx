@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { Tabs, Avatar } from "antd";
 import { useState, useEffect } from "react";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { checkLoginSelector } from "~/redux/selector";
 import { Link } from "react-router-dom";
@@ -29,14 +28,16 @@ function HeaderLink({ title, icon, showModal, url }: propsType) {
   const [flashCards, setFlashcards] = useState<Lesson[]>([]);
 
   useEffect(() => {
-    const jwt = jwtDecode(localStorage.getItem("token") || "");
-    axios
-      .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
-      .then((res) => {
-        console.log(res.data);
-        setFlashcards(res.data);
-      })
-      .catch();
+    if (localStorage.getItem("token")) {
+      const jwt = jwtDecode(localStorage.getItem("token") || "");
+      axios
+        .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+        .then((res) => {
+          console.log(res.data);
+          setFlashcards(res.data);
+        })
+        .catch();
+    }
   }, []);
   return (
     <span className={clsx(style.span, "font-bold")}>
