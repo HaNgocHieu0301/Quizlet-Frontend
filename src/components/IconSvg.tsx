@@ -1,4 +1,4 @@
-interface IconSvgProps {
+export interface IconSvgProps {
   width?: number;
   height?: number;
   iconName: string;
@@ -14,13 +14,7 @@ const IconSvg = ({
   fill,
 }: IconSvgProps) => {
   return (
-    <svg
-      width={width}
-      height={height}
-      className="mx-1"
-      color={color}
-      fill={fill}
-    >
+    <svg width={width} height={height} color={color} fill={fill}>
       <noscript></noscript>
       <use xlinkHref={`#${iconName}`}></use>
       <noscript></noscript>
