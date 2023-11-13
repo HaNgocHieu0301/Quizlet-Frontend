@@ -91,3 +91,64 @@ export const RemoveQuestion = async (questionId: number) => {
     console.log(error);
   }
 };
+
+export const getApi = async (url: string) => {
+  try {
+    const response = await axios.get(url);
+    if (response.status >= 200 && response.status < 300) {
+      const data = response.data;
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+export const putApi = async (url: string, data: any) => {
+  try {
+    const response = await axios.put(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      const data = response.data;
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+export const postApi = async (url: string, data: any) => {
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      const data = response.data;
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+export const deleteApiWithId = async (url: string) => {
+  try {
+    const response = await axios.delete(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      const data = response.data;
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};

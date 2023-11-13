@@ -2,7 +2,12 @@ import { Button, ConfigProvider, Dropdown } from "antd";
 import { useParams } from "react-router-dom";
 // import Icons from "../../assets/icons";
 import IconSvg from "../IconSvg";
-const OptionButtons = () => {
+import { remove } from "lodash";
+const OptionButtons = ({
+  removeLessonCallback,
+}: {
+  removeLessonCallback: Function;
+}) => {
   const { lessonId } = useParams();
   const lessonIdNum: number = parseInt(lessonId as string);
   const goToEdit = () => {
@@ -49,6 +54,7 @@ const OptionButtons = () => {
                 // className="w-full h-12 flex flex-row justify-start items-center px-2 hover:bg-[#edeff4] transition duration-300 ease-in-out"
                 className="flex flex-row justify-start items-center w-full h-12"
                 icon={<IconSvg iconName="garbage  " fill="#586380" />}
+                onClick={() => removeLessonCallback()}
               >
                 <span>Xóa</span>
               </Button>

@@ -12,6 +12,7 @@ import OptionButtons from "../../components/Flashcard/OptionButtons";
 import SettingModal from "~/components/Flashcard/SettingModal";
 import axios from "axios";
 import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
+import { deleteApiWithId } from "~/common";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -35,14 +36,19 @@ const Lesson = () => {
    * update flashcard list to re-render
    * @param updatedFlashcard
    */
-  const updateFlashcardCallback = (updatedFlashcard: Flashcard) => {
+  const updateFlashcardCallback = (
+    index: number,
+    updatedFlashcard: Flashcard
+  ) => {
     console.log("updateFlashcardCallback");
     console.log(updatedFlashcard);
-    const updatedFlashcards = flashcards.map((flashcard) =>
-      flashcard.questionId === updatedFlashcard.questionId
-        ? updatedFlashcard
-        : flashcard
-    );
+    // const updatedFlashcards = flashcards.map((flashcard) =>
+    //   flashcard.questionId === updatedFlashcard.questionId
+    //     ? updatedFlashcard
+    //     : flashcard
+    // );
+    flashcards[index].term = updatedFlashcard.term;
+    flashcards[index].answers = updatedFlashcard.answers;
     var tmp = flashcards.find(
       (flashcard) => flashcard.questionId === updatedFlashcard.questionId
     );
@@ -50,7 +56,7 @@ const Lesson = () => {
       tmp.isStarred = updatedFlashcard.isStarred;
       console.log(flashcards);
     }
-    setFlashcards((flashcards) => [...updatedFlashcards]);
+    setFlashcards((flashcards) => [...flashcards]);
   };
   const ChangeToStarredFlashcards = () => {
     const starredFlashcards = flashcards.filter((o) => o.isStarred);
@@ -65,16 +71,29 @@ const Lesson = () => {
   const handleChangeEditingMode = () => {
     navigate("/Lesson/EditingMode");
   };
-
+  const removeLessonCallback = () => {
+    deleteApiWithId(
+      "http://localhost:5219/api/Lessons/DeleteLesson/" + lessonIdNum
+    ).then((res) => {
+      if (res.status >= 200 && res.status < 300) {
+        navigate("/");
+      }
+    });
+  };
   useEffect(() => {
     const lessonIdNum: number = parseInt(lessonId as string);
     if (flashcards.length === 0) {
-      fetchFlashcardsByLessonId(lessonIdNum).then((flashcards) => {
-        if (Array.isArray(flashcards)) {
-          setFlashcards(flashcards);
-          setFlashcardsConstant(flashcards);
-        }
-      });
+      fetchFlashcardsByLessonId(lessonIdNum)
+        .then((flashcards) => {
+          if (Array.isArray(flashcards)) {
+            setFlashcards(flashcards);
+            setFlashcardsConstant(flashcards);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          navigate("/");
+        });
     }
     const tmp = flashcards.filter((flashcard) => flashcard.isStarred);
     setStarredFlashcards(tmp);
@@ -220,7 +239,7 @@ const Lesson = () => {
                     <h2>Ha Ngoc Hieu</h2>
                   </div>
                 </div>
-                <OptionButtons />
+                <OptionButtons removeLessonCallback={removeLessonCallback} />
               </div>
               <h4 className="Description text-start">
                 Chapter 123 da sua noi dung
@@ -291,6 +310,7 @@ const Lesson = () => {
                 {flashcards.map((flashcard, index) => (
                   <FlatFlashCard
                     key={index}
+                    index={index}
                     flashcard={flashcard}
                     updateFlashcardCallback={updateFlashcardCallback}
                   />

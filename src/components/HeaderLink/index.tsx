@@ -29,14 +29,6 @@ function HeaderLink({ title, icon, showModal, url }: propsType) {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      const jwt = jwtDecode(localStorage.getItem("token") || "");
-      axios
-        .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
-        .then((res) => {
-          console.log(res.data);
-          setFlashcards(res.data);
-        })
-        .catch();
       // const jwt = jwtDecode(localStorage.getItem("token") || "");
       // axios
       //   .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)

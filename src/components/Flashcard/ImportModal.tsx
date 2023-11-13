@@ -77,10 +77,10 @@ const ImportModal = ({
             </div>
             {/* setting options to import */}
             <Flex justify="space-between" className="w-full">
-              <div className="grid md:grid-cols-2 grid-cols-1">
+              {/* <div className="grid md:grid-cols-2 grid-cols-1">
                 <div>
                   <div>
-                    <span>Giữa thuật ngữ và định nghĩa</span>
+                    <span>Sử dụng dấu ` giữa thuật ngữ và định nghĩa</span>
                   </div>
                   <Radio.Group name="radiogroup" defaultValue={1}>
                     <Flex align="center" justify="center">
@@ -105,7 +105,7 @@ const ImportModal = ({
                 </div>
                 <div>
                   <div>
-                    <span>Giữa các thẻ</span>
+                    <span>Sử dụng dấu ~ giữa các thẻ</span>
                   </div>
                   <Radio.Group name="radiogroup" defaultValue={1}>
                     <Flex align="center" justify="center">
@@ -128,7 +128,15 @@ const ImportModal = ({
                     </Flex>
                   </Radio.Group>
                 </div>
-              </div>
+              </div> */}
+              <Flex vertical gap={8}>
+                <span>
+                  Sử dụng dấu <strong>`</strong> giữa thuật ngữ và định nghĩa
+                </span>
+                <span>
+                  Sử dụng dấu <strong>~</strong> giữa các thẻ
+                </span>
+              </Flex>
               {/* Import Button */}
               <ConfigProvider
                 theme={{
@@ -161,7 +169,7 @@ const ImportModal = ({
           <div className="px-10 mb-10">
             <h4 className="text-lg font-bold leading-tight m-0">
               <span>
-                Xem trước <span>2 thẻ</span>
+                Xem trước <span>{flashcards.length} thẻ</span>
               </span>
             </h4>
             <div style={{ display: importedValue === "" ? "block" : "none" }}>

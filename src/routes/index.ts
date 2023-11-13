@@ -29,8 +29,8 @@ const publicRoutes: Route[] = [
   { path: "/Profile", element: Profile, auth: true },
   { path: "/", element: Home },
   { path: "/recover", element: Recover },
-  { path: "/create-set", element: CreateSet, auth: true },
-  { path: "/Folder/:folderId", element: Folder },
+  { path: "/create-set/:folderId?", element: CreateSet, auth: true },
+  { path: "/Folder/:folderId?", element: Folder },
 ];
 
 /**
