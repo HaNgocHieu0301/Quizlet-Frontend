@@ -12,14 +12,18 @@ import OptionButtons from "../../components/Flashcard/OptionButtons";
 import SettingModal from "~/components/Flashcard/SettingModal";
 import axios from "axios";
 import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
+import { getApi } from "~/common";
+import { getFlashCardsApi } from "~/api/FlashCard";
+import { Lesson } from "~/type";
 
-const Lesson = () => {
+const LessonComponent = () => {
   const { lessonId } = useParams();
   const lessonIdNum: number = parseInt(lessonId as string);
   let navigate = useNavigate();
   const [flashcardsConstant, setFlashcardsConstant] = useState<Flashcard[]>([]);
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [isStarred, setIsStarred] = useState<boolean>(false);
+  const [lesson, setLesson] = useState<Lesson>(Object);
   const [starredFlashcards, setStarredFlashcards] = useState<Flashcard[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
@@ -62,9 +66,6 @@ const Lesson = () => {
     setFlashcards(flashcardsConstant);
     setIsStarred(false);
   };
-  const handleChangeEditingMode = () => {
-    navigate("/Lesson/EditingMode");
-  };
 
   useEffect(() => {
     const lessonIdNum: number = parseInt(lessonId as string);
@@ -75,6 +76,11 @@ const Lesson = () => {
           setFlashcardsConstant(flashcards);
         }
       });
+      getApi(getFlashCardsApi + `?$filter=lessonId eq ${lessonId}`).then(
+        (res) => {
+          setLesson(res[0]);
+        }
+      );
     }
     const tmp = flashcards.filter((flashcard) => flashcard.isStarred);
     setStarredFlashcards(tmp);
@@ -85,7 +91,7 @@ const Lesson = () => {
         <div className="bg-[#f6f7fb] max-w-[50rem] mx-auto my-0 px-10 pt-6">
           <div className="Intro">
             <div className="Title flex flex-col gap-2 mb-4">
-              <h1 className="font-bold text-3xl text-start">MLN111</h1>
+              <h1 className="font-bold text-3xl text-start">{lesson.title}</h1>
               {/* statistic and review */}
               <div className="flex flex-row gap-2">
                 <div className="flex flex-row gap-2">
@@ -217,14 +223,12 @@ const Lesson = () => {
                     <IconSvg iconName="share-ios" width={50} height={50} />
                   </div>
                   <div className="Name">
-                    <h2>Ha Ngoc Hieu</h2>
+                    <h2>{lesson.userId}</h2>
                   </div>
                 </div>
-                <OptionButtons />
+                <OptionButtons userId={lesson.userId} />
               </div>
-              <h4 className="Description text-start">
-                Chapter 123 da sua noi dung
-              </h4>
+              <h4 className="Description text-start">{lesson.description}</h4>
             </div>
             <div className="Detail-Content">
               <ConfigProvider
@@ -238,7 +242,7 @@ const Lesson = () => {
               >
                 <div className="Header flex flex-row justify-between items-center gap-4">
                   <h2 className="text-lg font-bold">
-                    Thuat ngu trong hoc phan nay (408){" "}
+                    Thuat ngu trong hoc phan nay ({flashcards.length}){" "}
                   </h2>
                   <Flex justify="space-between" align="center">
                     <Button
@@ -272,21 +276,6 @@ const Lesson = () => {
                   </Flex>
                 </div>
               </ConfigProvider>
-              <div className="Progress flex flex-row justify-between my-5">
-                <div className="flex flex-col">
-                  <h2 className="text-lg font-bold text-yellow-600 text-start">
-                    Dang hoc (216)
-                  </h2>
-                  <h3>
-                    Ban da bat dau hoc nhung thuat ngu nay. Tiep tuc phat huy
-                    nhe!
-                  </h3>
-                </div>
-                <Button className="flex flex-row justify-center items-center border-4 border-[#d9dde8] rounded-md p-2">
-                  <IconSvg iconName="star-empty" />
-                  <span className="hover:text-[#ffcd1f]">Chon 216</span>
-                </Button>
-              </div>
               <div className="MainContent bg-[#f6f7fb] p-2">
                 {flashcards.map((flashcard, index) => (
                   <FlatFlashCard
@@ -338,4 +327,4 @@ const Lesson = () => {
   );
 };
 
-export default Lesson;
+export default LessonComponent;

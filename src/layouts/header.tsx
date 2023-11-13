@@ -26,7 +26,7 @@ import Auth from "~/components/Auth/Auth";
 import { useEffect } from "react";
 import AuthSlice from "~/components/Auth/AuthSlice";
 import axios from "axios";
-import { getFlashCards } from "~/api/FlashCard";
+import { getFlashCardsApi } from "~/api/FlashCard";
 import { useState } from "react";
 import { Lesson } from "~/type";
 
@@ -38,7 +38,6 @@ function Header() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log(token);
     if (token) {
       try {
         jwtDecode(token);
@@ -52,7 +51,7 @@ function Header() {
   function handleSearch(e: any) {
     if (e.target.value) {
       axios
-        .get(getFlashCards + `?$filter=contains(title, '${e.target.value}')`)
+        .get(getFlashCardsApi + `?$filter=contains(title, '${e.target.value}')`)
         .then((res) => {
           setSearchList(res.data);
         })

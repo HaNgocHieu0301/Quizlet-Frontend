@@ -2,9 +2,21 @@ import { Button, ConfigProvider, Dropdown } from "antd";
 import { useParams } from "react-router-dom";
 // import Icons from "../../assets/icons";
 import IconSvg from "../IconSvg";
-const OptionButtons = () => {
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+
+const OptionButtons = ({ userId }: { userId: string }) => {
   const { lessonId } = useParams();
   const lessonIdNum: number = parseInt(lessonId as string);
+  const [show, setShow] = useState<boolean>();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setShow(jwtDecode(token).sub === userId);
+    }
+  }, [userId]);
+
   const goToEdit = () => {
     window.location.href = "/Lesson/EditingMode/" + lessonIdNum;
   };
@@ -34,11 +46,14 @@ const OptionButtons = () => {
         >
           <span>Chia se</span>
         </Button>
-        <Button
-          size="large"
-          icon={<IconSvg iconName="edit" fill="#586380" />}
-          onClick={goToEdit}
-        />
+        {show && (
+          <Button
+            size="large"
+            icon={<IconSvg iconName="edit" fill="#586380" />}
+            onClick={goToEdit}
+          />
+        )}
+
         <Dropdown
           trigger={["click"]}
           placement="topRight"

@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { checkLoginSelector } from "~/redux/selector";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { getFlashCards } from "~/api/FlashCard";
+import { getFlashCardsApi } from "~/api/FlashCard";
 import { Lesson } from "~/type";
 import { jwtDecode } from "jwt-decode";
 
@@ -31,7 +31,7 @@ function HeaderLink({ title, icon, showModal, url }: propsType) {
     if (localStorage.getItem("token")) {
       const jwt = jwtDecode(localStorage.getItem("token") || "");
       axios
-        .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+        .get(getFlashCardsApi + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
         .then((res) => {
           console.log(res.data);
           setFlashcards(res.data);

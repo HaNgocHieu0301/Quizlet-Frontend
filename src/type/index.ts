@@ -20,5 +20,6 @@ type Lesson = {
   visibleId: number;
   folderId: number;
   rate: number;
+  userId: string;
 };
 export type { subModalRef, userInfo, Lesson };

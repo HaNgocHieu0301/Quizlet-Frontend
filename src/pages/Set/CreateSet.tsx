@@ -11,11 +11,10 @@ import { Button, Flex, Input, Form } from "antd";
 import TermRow from "../../components/Flashcard/TermRow";
 import ImportModal from "../../components/Flashcard/ImportModal";
 import axios from "axios";
-import { Answer } from "~/types/Answer";
 import { Flashcard } from "~/types/FlashCard";
-import { RemoveQuestion } from "~/components/Flashcard/QuestionFunctions";
 import { AddAndUpdateLesson } from "~/types/AddAndUpdateLesson";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const CreateSet = () => {
   const [isFocusTitle, setIsFocusTitle] = useState(false);
@@ -26,9 +25,10 @@ const CreateSet = () => {
   const [lessonDescription, setLessonDescription] = useState("");
   const flashcardListRef = useRef<any>(null);
   const flashcardFormRef = useRef<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < 2; index++) {
       setFlashcards((flashcards) => [
         ...flashcards,
         {
@@ -146,41 +146,24 @@ const CreateSet = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
       console.log(response);
-      if (response.status >= 200 && response.status < 300) {
-        // window.location.href = "/lesson/" + lessonIdNum;
-      }
+      navigate("/Lesson/" + response.data);
     } catch (error) {
       console.log(error);
     }
   };
-  const TestForget = async () => {
-    const email = "hieuhn0301@gmail.com";
-    const json = JSON.stringify(email);
-    console.log(json);
-    axios
-      .post("http://localhost:5271/api/AuthAPI/forgot-password", json, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+
   return (
     <>
       <main className="w-full">
         <div className="CreateSetPage">
           <div className="px-20 py-8">
             <Flex className="mb-4" align="center" justify="space-between">
-              <h1 onClick={TestForget}>Create a new study set</h1>
+              <h1>Create a new study set</h1>
               <Button size="large" type="primary" onClick={handleSubmitForm}>
                 Create
               </Button>

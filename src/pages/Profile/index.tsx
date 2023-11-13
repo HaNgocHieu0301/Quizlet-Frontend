@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { debounce } from "lodash";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getFlashCards } from "~/api/FlashCard";
+import { getFlashCardsApi } from "~/api/FlashCard";
 import { Lesson } from "~/type";
 
 const { TabPane } = Tabs;
@@ -20,7 +20,7 @@ function Profile() {
     if (token) {
       const jwt = jwtDecode(token);
       axios
-        .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+        .get(getFlashCardsApi + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
         .then((res) => {
           setFlashcards(res.data);
         })
