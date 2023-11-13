@@ -1,6 +1,6 @@
 import { Button, Flex, Form, Input, Radio, ConfigProvider, Modal } from "antd";
 import { useState, useRef, useEffect } from "react";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 const { TextArea } = Input;
 
 const ImportModal = ({

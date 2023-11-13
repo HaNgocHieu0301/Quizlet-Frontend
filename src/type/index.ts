@@ -1,3 +1,5 @@
+import { JwtPayload } from "jwt-decode";
+
 type subModalRef = {
   show: Function;
 };
@@ -9,4 +11,14 @@ type userInfo = {
   role: string;
 };
 
-export type { subModalRef, userInfo };
+type Lesson = {
+  lessonId: number;
+  title: string;
+  description: string;
+  createAt: Date;
+  modifiedAt: Date;
+  visibleId: number;
+  folderId: number;
+  rate: number;
+};
+export type { subModalRef, userInfo, Lesson };

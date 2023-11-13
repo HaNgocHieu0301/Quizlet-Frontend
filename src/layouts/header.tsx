@@ -17,6 +17,8 @@ import { FacebookProvider } from "react-facebook";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import clsx from "clsx";
+import { useSignOut } from "react-auth-kit";
+import { Link, useNavigate } from "react-router-dom";
 
 import style from "./style.module.css";
 import { checkLoginSelector } from "~/redux/selector";
@@ -26,6 +28,9 @@ import AuthSlice from "~/components/Auth/AuthSlice";
 
 function Header() {
   const dispatch = useDispatch();
+  const signOut = useSignOut();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -45,17 +50,19 @@ function Header() {
   function handlerLogout() {
     dispatch(AuthSlice.actions.logout());
     localStorage.removeItem("token");
+    signOut();
+    navigate("/");
   }
 
   const auth = useSelector(checkLoginSelector);
 
   return (
     <header
-      className="sticky items-center justify-center flex h-[64px] gap-4 px-4"
+      className="sticky top-0 z-10 bg-white items-center justify-center flex h-[64px] gap-4 px-4"
       style={{ borderBottom: "1px solid #ccc" }}
     >
       <h2 className="text-blue-600 cursor-pointer">Quizlet</h2>
-      <HeaderLink title="Home"></HeaderLink>
+      <HeaderLink title="Home" url="/"></HeaderLink>
       <HeaderLink title="Your library" icon showModal></HeaderLink>
       <Input
         allowClear
@@ -72,9 +79,11 @@ function Header() {
           size="large"
         ></Button>
         <div className={clsx(style.addModal)}>
-          <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
+          <p className="text-start px-4 text-gray-600 py-2 cursor-pointer hover:bg-gray-300">
             <FontAwesomeIcon className="pr-2" icon={faFileCirclePlus} />
-            Study sets
+            <Link className="no-underline text-gray-600" to="/create-set">
+              Study sets
+            </Link>
           </p>
           <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
             <FontAwesomeIcon className="pr-2" icon={faFolder} />
@@ -98,7 +107,9 @@ function Header() {
             <div className={clsx(style.accountModal)}>
               <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
                 <FontAwesomeIcon className="pr-2" icon={faUser} />
-                Profile
+                <Link className="no-underline text-gray-600" to="/Profile">
+                  Profile
+                </Link>
               </p>
               <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
                 <FontAwesomeIcon className="pr-2" icon={faGear} />

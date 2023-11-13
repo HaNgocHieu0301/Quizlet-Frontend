@@ -13,7 +13,7 @@ import TermRow from "../../components/Flashcard/TermRow";
 import ImportModal from "../../components/Flashcard/ImportModal";
 import axios from "axios";
 import { Answer } from "~/types/Answer";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import {
   RemoveAnswerInQuestion,
   RemoveQuestion,

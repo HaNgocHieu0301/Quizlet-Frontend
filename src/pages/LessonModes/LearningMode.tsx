@@ -4,7 +4,7 @@ import Icons from "~/assets/icons";
 import IconSvg from "../../components/IconSvg";
 import ModeHeader from "../../components/Flashcard/ModeHeader";
 import { useParams } from "react-router-dom";
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFunctions";
 import { LearningModeQuestion } from "~/types/LearningModeQuestion";
 import { Answer } from "~/types/Answer";

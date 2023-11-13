@@ -1,4 +1,4 @@
-import { Flashcard } from "~/types/Flashcard";
+import { Flashcard } from "~/types/FlashCard";
 import axios from "axios";
 
 export const RemoveAnswerInQuestion = async (
@@ -67,7 +67,7 @@ export const UpdateLesson = async (updatedList: Flashcard[]) => {
 export const fetchFlashcardsByLessonId = async (lessonId: number) => {
   try {
     const response = await axios.get<any[]>(
-      "http://localhost:5219/api/Questions/GetByLessonId/" + lessonId
+      "http://localhost:5219/api/Questions?$filter=lessonId eq " + lessonId
     );
     if (response.status >= 200 && response.status < 300) {
       const data = response.data;
