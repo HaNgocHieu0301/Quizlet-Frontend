@@ -17,7 +17,7 @@ import { FacebookProvider } from "react-facebook";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import clsx from "clsx";
-import { useSignOut } from "react-auth-kit";
+// import { useSignOut } from "react-auth-kit";
 import { Link, useNavigate } from "react-router-dom";
 
 import style from "./style.module.css";
@@ -28,11 +28,12 @@ import AuthSlice from "~/components/Auth/AuthSlice";
 
 function Header() {
   const dispatch = useDispatch();
-  const signOut = useSignOut();
+  // const signOut = useSignOut();
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log(token);
     if (token) {
       try {
         jwtDecode(token);
@@ -50,7 +51,7 @@ function Header() {
   function handlerLogout() {
     dispatch(AuthSlice.actions.logout());
     localStorage.removeItem("token");
-    signOut();
+    // signOut();
     navigate("/");
   }
 
@@ -81,9 +82,9 @@ function Header() {
         <div className={clsx(style.addModal)}>
           <p className="text-start px-4 text-gray-600 py-2 cursor-pointer hover:bg-gray-300">
             <FontAwesomeIcon className="pr-2" icon={faFileCirclePlus} />
-            <Link className="no-underline text-gray-600" to="/create-set">
+            <a className="no-underline text-gray-600" href="/create-set">
               Study sets
-            </Link>
+            </a>
           </p>
           <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
             <FontAwesomeIcon className="pr-2" icon={faFolder} />

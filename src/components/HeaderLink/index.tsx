@@ -29,14 +29,16 @@ function HeaderLink({ title, icon, showModal, url }: propsType) {
   const [flashCards, setFlashcards] = useState<Lesson[]>([]);
 
   useEffect(() => {
-    const jwt = jwtDecode(localStorage.getItem("token") || "");
-    axios
-      .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
-      .then((res) => {
-        console.log(res.data);
-        setFlashcards(res.data);
-      })
-      .catch();
+    if (localStorage.getItem("token")) {
+      // const jwt = jwtDecode(localStorage.getItem("token") || "");
+      // axios
+      //   .get(getFlashCards + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+      //   .then((res) => {
+      //     console.log(res.data);
+      //     setFlashcards(res.data);
+      //   })
+      //   .catch();
+    }
   }, []);
   return (
     <span className={clsx(style.span, "font-bold")}>

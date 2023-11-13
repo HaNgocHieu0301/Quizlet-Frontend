@@ -23,7 +23,10 @@ export const RemoveAnswerInQuestion = async (
   }
 };
 
-export const UpdateQuestion = async (updatedValue: Flashcard) => {
+export const UpdateQuestion = async (
+  updatedValue: Flashcard,
+  updateFlashcardsCallback: Function
+) => {
   const QuestionsJson = JSON.stringify(updatedValue);
   try {
     const response = await axios.put(
@@ -36,7 +39,7 @@ export const UpdateQuestion = async (updatedValue: Flashcard) => {
       }
     );
     if (response.status >= 200 && response.status < 300) {
-      return updatedValue;
+      updateFlashcardsCallback(updatedValue);
     }
   } catch (error) {
     console.log(error);

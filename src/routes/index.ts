@@ -7,7 +7,7 @@ import EditingMode from "~/pages/LessonModes/EditingMode";
 import Recover from "~/pages/Recover";
 import CreateSet from "~/pages/Set/CreateSet";
 import Profile from "~/pages/Profile";
-
+import Folder from "~/pages/Folder";
 type Route = {
   path: string;
   element: FunctionComponent;
@@ -30,6 +30,7 @@ const publicRoutes: Route[] = [
   { path: "/", element: Home },
   { path: "/recover", element: Recover },
   { path: "/create-set", element: CreateSet, auth: true },
+  { path: "/Folder/:folderId", element: Folder },
 ];
 
 /**

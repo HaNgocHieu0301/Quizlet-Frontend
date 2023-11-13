@@ -1,8 +1,14 @@
 import React from "react";
 import { Flex, Button, Dropdown } from "antd";
 import IconSvg from "../IconSvg";
+import { useParams } from "react-router-dom";
 
 const ModeHeader = () => {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const lessonIdNum: number = parseInt(lessonId as string);
+  const closeHandler = () => {
+    window.location.href = `/lesson/${lessonIdNum}`;
+  };
   return (
     <div className="ModeHeader bg-white sticky top-0 z-10 w-full">
       <Flex justify="space-between" align="center" className="px-6 h-16">
@@ -106,7 +112,11 @@ const ModeHeader = () => {
         </Flex>
         <Flex justify="space-between" align="center" gap="middle">
           <Button size="large">Tuy Chon</Button>
-          <Button size="large" icon={<IconSvg iconName="close-x" />} />
+          <Button
+            size="large"
+            icon={<IconSvg iconName="close-x" />}
+            onClick={closeHandler}
+          />
         </Flex>
       </Flex>
     </div>
