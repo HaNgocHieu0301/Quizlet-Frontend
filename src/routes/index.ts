@@ -33,6 +33,8 @@ const publicRoutes: Route[] = [
   { path: "/create-set", element: CreateSet, auth: true },
   { path: "/Folder/:folderId", element: Folder },
   { path: "/Blog/:blogId", element: BlogPage },
+  { path: "/create-set/:folderId?", element: CreateSet, auth: true },
+  { path: "/Folder/:folderId?", element: Folder },
 ];
 
 /**

@@ -15,6 +15,7 @@ import { fetchFlashcardsByLessonId } from "~/components/Flashcard/QuestionFuncti
 import { getApi } from "~/common";
 import { getFlashCardsApi } from "~/api/FlashCard";
 import { Lesson } from "~/type";
+import { deleteApiWithId } from "~/common";
 
 const LessonComponent = () => {
   const { lessonId } = useParams();
@@ -39,14 +40,19 @@ const LessonComponent = () => {
    * update flashcard list to re-render
    * @param updatedFlashcard
    */
-  const updateFlashcardCallback = (updatedFlashcard: Flashcard) => {
+  const updateFlashcardCallback = (
+    index: number,
+    updatedFlashcard: Flashcard
+  ) => {
     console.log("updateFlashcardCallback");
     console.log(updatedFlashcard);
-    const updatedFlashcards = flashcards.map((flashcard) =>
-      flashcard.questionId === updatedFlashcard.questionId
-        ? updatedFlashcard
-        : flashcard
-    );
+    // const updatedFlashcards = flashcards.map((flashcard) =>
+    //   flashcard.questionId === updatedFlashcard.questionId
+    //     ? updatedFlashcard
+    //     : flashcard
+    // );
+    flashcards[index].term = updatedFlashcard.term;
+    flashcards[index].answers = updatedFlashcard.answers;
     var tmp = flashcards.find(
       (flashcard) => flashcard.questionId === updatedFlashcard.questionId
     );
@@ -54,7 +60,7 @@ const LessonComponent = () => {
       tmp.isStarred = updatedFlashcard.isStarred;
       console.log(flashcards);
     }
-    setFlashcards((flashcards) => [...updatedFlashcards]);
+    setFlashcards((flashcards) => [...flashcards]);
   };
   const ChangeToStarredFlashcards = () => {
     const starredFlashcards = flashcards.filter((o) => o.isStarred);
@@ -66,7 +72,6 @@ const LessonComponent = () => {
     setFlashcards(flashcardsConstant);
     setIsStarred(false);
   };
-
   useEffect(() => {
     const lessonIdNum: number = parseInt(lessonId as string);
     if (flashcards.length === 0) {
@@ -81,6 +86,32 @@ const LessonComponent = () => {
           setLesson(res[0]);
         }
       );
+  const handleChangeEditingMode = () => {
+    navigate("/Lesson/EditingMode");
+  };
+  const removeLessonCallback = () => {
+    deleteApiWithId(
+      "http://localhost:5219/api/Lessons/DeleteLesson/" + lessonIdNum
+    ).then((res) => {
+      if (res.status >= 200 && res.status < 300) {
+        navigate("/");
+      }
+    });
+  };
+  useEffect(() => {
+    const lessonIdNum: number = parseInt(lessonId as string);
+    if (flashcards.length === 0) {
+      fetchFlashcardsByLessonId(lessonIdNum)
+        .then((flashcards) => {
+          if (Array.isArray(flashcards)) {
+            setFlashcards(flashcards);
+            setFlashcardsConstant(flashcards);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          navigate("/");
+        });
     }
     const tmp = flashcards.filter((flashcard) => flashcard.isStarred);
     setStarredFlashcards(tmp);
@@ -227,6 +258,7 @@ const LessonComponent = () => {
                   </div>
                 </div>
                 <OptionButtons userId={lesson.userId} />
+                <OptionButtons removeLessonCallback={removeLessonCallback} />
               </div>
               <h4 className="Description text-start">{lesson.description}</h4>
             </div>
@@ -280,6 +312,7 @@ const LessonComponent = () => {
                 {flashcards.map((flashcard, index) => (
                   <FlatFlashCard
                     key={index}
+                    index={index}
                     flashcard={flashcard}
                     updateFlashcardCallback={updateFlashcardCallback}
                   />

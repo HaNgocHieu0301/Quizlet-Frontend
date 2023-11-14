@@ -15,8 +15,14 @@ import { Flashcard } from "~/types/FlashCard";
 import { AddAndUpdateLesson } from "~/types/AddAndUpdateLesson";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const CreateSet = () => {
+  const { folderId } = useParams();
+  let folderIdNum: number = 0;
+  if (folderId !== undefined) {
+    folderIdNum = parseInt(folderId as string);
+  }
   const [isFocusTitle, setIsFocusTitle] = useState(false);
   const [isFocusDescription, setIsFocusDescription] = useState(false);
   const [isOpenImportModal, setIsOpenImportModal] = useState(false);
@@ -151,7 +157,10 @@ const CreateSet = () => {
         }
       );
       console.log(response);
-      navigate("/Lesson/" + response.data);
+      //navigate("/Lesson/" + response.data);
+      if (response.status >= 200 && response.status < 300) {
+        window.location.href = "/lesson/" + response.data;
+      }
     } catch (error) {
       console.log(error);
     }

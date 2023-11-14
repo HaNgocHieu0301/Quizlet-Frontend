@@ -1,5 +1,5 @@
 import HeaderLink from "~/components/HeaderLink";
-import { Input, Button, Avatar } from "antd";
+import { Input, Button, Avatar, Modal, Flex, Form } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileCirclePlus,
@@ -30,12 +30,19 @@ import { getFlashCardsApi } from "~/api/FlashCard";
 import { useState } from "react";
 import { Lesson } from "~/type";
 import Blog from "~/components/Blog";
+import IconSvg from "~/components/IconSvg";
+import Icons from "~/assets/icons";
+import { Folder } from "~/types/Folder";
+import { postApi } from "~/common";
 
 function Header() {
   const dispatch = useDispatch();
   // const signOut = useSignOut();
   const navigate = useNavigate();
   const [serachList, setSearchList] = useState<Lesson[]>([]);
+  const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] =
+    useState<boolean>(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -70,7 +77,29 @@ function Header() {
     // signOut();
     navigate("/");
   }
+  const onCreateNewFolder = (values: any) => {
+    console.log(values);
+    const dataFolder: Folder = {
+      folderId: 0,
+      title: values.title,
+      description: values.description,
+      userId: jwtDecode(localStorage.getItem("token") as string).sub as string,
+      modifiedAt: new Date(),
+      createdAt: new Date(),
+    };
+    const json = JSON.stringify(dataFolder);
+    postApi("http://localhost:5025/api/folder", json).then((res) => {
+      console.log(res);
+      window.location.href = "/Folder/" + res;
+    });
+  };
+  const handleCloseModal = () => {
+    // Reset các trường của form
+    form.resetFields();
 
+    // Sau đó mới đóng modal
+    setIsOpenCreateFolderModal(false);
+  };
   const auth = useSelector(checkLoginSelector);
 
   return (
@@ -121,13 +150,76 @@ function Header() {
               Study sets
             </a>
           </p>
-          <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
+          <p
+            className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300"
+            onClick={() => setIsOpenCreateFolderModal(true)}
+          >
             <FontAwesomeIcon className="pr-2" icon={faFolder} />
             Folder
           </p>
           <Blog />
+          {/* <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
+            <FontAwesomeIcon className="pr-2" icon={faPaste} />
+            Study sets
+          </p> */}
         </div>
       </div>
+
+      <Modal
+        open={isOpenCreateFolderModal}
+        closeIcon={null}
+        footer={null}
+        title={
+          <Flex
+            justify="space-between"
+            align="center"
+            className="h-[75px] px-6"
+          >
+            <h1 className=" text-3xl font-bold">Tạo thư mục mới</h1>
+            <Button
+              shape="circle"
+              type="text"
+              icon={<IconSvg fill="#000000" iconName="close-x" />}
+              onClick={handleCloseModal}
+            />
+          </Flex>
+        }
+      >
+        <Form
+          form={form}
+          className="px-6"
+          name="createNewFolderForm"
+          onFinish={onCreateNewFolder}
+        >
+          <Form.Item
+            name="title"
+            rules={[
+              { required: true, message: "Tên thư mục không được để trống!" },
+            ]}
+          >
+            <Input
+              placeholder="Tên thư mục*"
+              className="rounded-3xl h-[36px]"
+            />
+          </Form.Item>
+          <Form.Item name="description">
+            <Input
+              placeholder="Nhập mô tả (tùy chọn)"
+              className="rounded-3xl h-[36px]"
+            />
+          </Form.Item>
+          <Form.Item className="flex justify-end">
+            <Button
+              className="w-[90px]"
+              type="primary"
+              size="large"
+              htmlType="submit"
+            >
+              Tạo mới
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {auth && (
         <>
@@ -170,6 +262,7 @@ function Header() {
           </FacebookProvider>
         </GoogleOAuthProvider>
       )}
+      <Icons />
     </header>
   );
 }

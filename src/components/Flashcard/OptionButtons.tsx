@@ -6,6 +6,12 @@ import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const OptionButtons = ({ userId }: { userId: string }) => {
+import { remove } from "lodash";
+const OptionButtons = ({
+  removeLessonCallback,
+}: {
+  removeLessonCallback: Function;
+}) => {
   const { lessonId } = useParams();
   const lessonIdNum: number = parseInt(lessonId as string);
   const [show, setShow] = useState<boolean>();
@@ -64,6 +70,7 @@ const OptionButtons = ({ userId }: { userId: string }) => {
                 // className="w-full h-12 flex flex-row justify-start items-center px-2 hover:bg-[#edeff4] transition duration-300 ease-in-out"
                 className="flex flex-row justify-start items-center w-full h-12"
                 icon={<IconSvg iconName="garbage  " fill="#586380" />}
+                onClick={() => removeLessonCallback()}
               >
                 <span>Xóa</span>
               </Button>

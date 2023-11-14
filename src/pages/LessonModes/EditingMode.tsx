@@ -59,6 +59,8 @@ const EditingMode = () => {
         })),
       }))
     );
+    console.log("import");
+    console.log(tmp);
     setIsOpenImportModal(false);
     setFlashcards(tmp);
   };

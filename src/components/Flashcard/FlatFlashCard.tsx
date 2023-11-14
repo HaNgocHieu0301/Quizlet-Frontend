@@ -8,9 +8,11 @@ import { UpdateQuestion, RemoveAnswerInQuestion } from "./QuestionFunctions";
 const { TextArea } = Input;
 
 const FlatFlashCard = ({
+  index,
   flashcard,
   updateFlashcardCallback,
 }: {
+  index: number;
   flashcard: Flashcard;
   updateFlashcardCallback: Function;
 }) => {
@@ -21,9 +23,8 @@ const FlatFlashCard = ({
 
   const starredHandler = (fc: Flashcard) => {
     const updatedValue = { ...fc, isStarred: !fc.isStarred };
-    UpdateQuestion(updatedValue).then((updatedValue) => {
-      updateFlashcardCallback(updatedValue);
-    });
+    updateFlashcardCallback(index, updatedValue);
+    UpdateQuestion(updatedValue);
   };
 
   const buttonEditHandler = (event: any) => {
@@ -50,9 +51,8 @@ const FlatFlashCard = ({
       term: term,
       answers: updatedAnswers,
     };
-    UpdateQuestion(updatedValue).then((updatedValue) => {
-      updateFlashcardCallback(updatedValue);
-    });
+    updateFlashcardCallback(index, updatedValue);
+    UpdateQuestion(updatedValue);
     setIsEditing(false);
   };
   // Hàm để xử lý remove 1 answer khi o che do edit
@@ -60,7 +60,7 @@ const FlatFlashCard = ({
     RemoveAnswerInQuestion(answerId, flashcard)
       .then((updatedFlashcard) => {
         console.log(updatedFlashcard);
-        updateFlashcardCallback(updatedFlashcard);
+        updateFlashcardCallback(index, updatedFlashcard);
       })
       .catch((error) => {
         console.log(error);
@@ -125,8 +125,7 @@ const FlatFlashCard = ({
                         autoFocus={true}
                       />
                     </Form.Item>
-                    {}
-                    <Button
+                    {/* <Button
                       style={{
                         display: `${
                           flashcard.answers.length === 1 && index === 0
@@ -140,7 +139,7 @@ const FlatFlashCard = ({
                         <IconSvg width={10} height={10} iconName="close-x" />
                       }
                       onClick={() => removeDefinitionHandler(answer.answerId)}
-                    />
+                    /> */}
                   </Flex>
                 ))}
               </Flex>
