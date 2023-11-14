@@ -86,6 +86,9 @@ const LessonComponent = () => {
           setLesson(res[0]);
         }
       );
+    }
+  });
+
   const handleChangeEditingMode = () => {
     navigate("/Lesson/EditingMode");
   };
@@ -257,8 +260,10 @@ const LessonComponent = () => {
                     <h2>{lesson.userId}</h2>
                   </div>
                 </div>
-                <OptionButtons userId={lesson.userId} />
-                <OptionButtons removeLessonCallback={removeLessonCallback} />
+                <OptionButtons
+                  userId={lesson.userId}
+                  removeLessonCallback={removeLessonCallback}
+                />
               </div>
               <h4 className="Description text-start">{lesson.description}</h4>
             </div>

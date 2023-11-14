@@ -93,8 +93,8 @@ export const RemoveQuestion = async (questionId: number) => {
 };
 
 export const getApi = async (url: string) => {
-  const res = await axios.get(url);
-  return res.data;
+  // const res = await axios.get(url);
+  // return res.data;
   try {
     const response = await axios.get(url);
     if (response.status >= 200 && response.status < 300) {

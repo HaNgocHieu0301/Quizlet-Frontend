@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Home from "~/pages/Home";
 import FlashCardMode from "~/pages/LessonModes/FlashCardMode";
 import LearningMode from "~/pages/LessonModes/LearningMode";
-import Lesson from "~/pages/LessonModes/Lesson";
+import LessonComponent from "~/pages/LessonModes/Lesson";
 import EditingMode from "~/pages/LessonModes/EditingMode";
 import Recover from "~/pages/Recover";
 import CreateSet from "~/pages/Set/CreateSet";
@@ -20,7 +20,7 @@ type Route = {
  * Route can be accessed without logging
  */
 const publicRoutes: Route[] = [
-  { path: "/Lesson/:lessonId", element: Lesson },
+  { path: "/Lesson/:lessonId", element: LessonComponent },
   {
     path: "/Lesson/FlashCardMode/:lessonId",
     element: FlashCardMode,

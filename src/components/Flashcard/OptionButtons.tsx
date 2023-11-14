@@ -5,11 +5,11 @@ import IconSvg from "../IconSvg";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
-const OptionButtons = ({ userId }: { userId: string }) => {
-import { remove } from "lodash";
 const OptionButtons = ({
+  userId,
   removeLessonCallback,
 }: {
+  userId: string;
   removeLessonCallback: Function;
 }) => {
   const { lessonId } = useParams();
