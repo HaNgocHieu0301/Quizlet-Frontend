@@ -8,6 +8,7 @@ import Recover from "~/pages/Recover";
 import CreateSet from "~/pages/Set/CreateSet";
 import Profile from "~/pages/Profile";
 import Folder from "~/pages/Folder";
+import BlogPage from "~/pages/Blog";
 type Route = {
   path: string;
   element: FunctionComponent;
@@ -31,6 +32,7 @@ const publicRoutes: Route[] = [
   { path: "/recover", element: Recover },
   { path: "/create-set", element: CreateSet, auth: true },
   { path: "/Folder/:folderId", element: Folder },
+  { path: "/Blog/:blogId", element: BlogPage },
 ];
 
 /**

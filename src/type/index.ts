@@ -22,4 +22,13 @@ type Lesson = {
   rate: number;
   userId: string;
 };
-export type { subModalRef, userInfo, Lesson };
+
+type BlogType = {
+  blogId: number;
+  title: string;
+  description: string;
+  createAt: Date;
+  modifiedAt: Date;
+  userId: string;
+};
+export type { subModalRef, userInfo, Lesson, BlogType };

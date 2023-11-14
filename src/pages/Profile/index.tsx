@@ -6,27 +6,42 @@ import { jwtDecode } from "jwt-decode";
 import { debounce } from "lodash";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { blogApi } from "~/api/Blog";
 import { getFlashCardsApi } from "~/api/FlashCard";
-import { Lesson } from "~/type";
+import { BlogType, Lesson } from "~/type";
 
 const { TabPane } = Tabs;
 
 function Profile() {
   const [tab, setTab] = useState("1");
   const [flashCards, setFlashcards] = useState<Lesson[]>([]);
+  const [blogs, setBLogs] = useState<BlogType[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const jwt = jwtDecode(token);
-      axios
-        .get(getFlashCardsApi + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
-        .then((res) => {
-          setFlashcards(res.data);
-        })
-        .catch();
+      if (tab === "1") {
+        axios
+          .get(getFlashCardsApi + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+          .then((res) => {
+            setFlashcards(res.data);
+          })
+          .catch();
+      }
+      if (tab === "2") {
+      }
+      if (tab === "3") {
+        axios
+          .get(blogApi + `?$top=5&$filter=UserId eq '${jwt.sub}'`)
+          .then((res) => {
+            setBLogs(res.data);
+            console.log(res.data);
+          })
+          .catch();
+      }
     }
-  }, []);
+  }, [tab]);
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -102,7 +117,7 @@ function Profile() {
               placeholder="Search your folder"
             ></Input>
           </Space>
-          <Row gutter={24}>
+          <Row className="mt-4" gutter={24}>
             {flashCards.length ? (
               flashCards.map((flashcard, index) => (
                 <Col span={8}>
@@ -137,13 +152,17 @@ function Profile() {
               placeholder="Search your blogs"
             ></Input>
           </Space>
-          <Row gutter={24}>
-            {flashCards.length ? (
-              flashCards.map((flashcard, index) => (
+          <Row className="mt-4" gutter={24}>
+            {blogs.length ? (
+              blogs.map((blog, index) => (
                 <Col span={8}>
                   <Card style={{ height: 120 }} hoverable bordered={false}>
-                    <h4 className="text-start mb-3">{flashcard.title}</h4>
-                    <p className="text-start">{flashcard.description}</p>
+                    <Link className="text-black" to={"/Blog/" + blog.blogId}>
+                      <h4 className="text-start mb-3">{blog.title}</h4>
+                      <p className="text-start">
+                        Creat At: {blog.createAt.toString()}
+                      </p>
+                    </Link>
                   </Card>
                 </Col>
               ))

@@ -29,6 +29,7 @@ import axios from "axios";
 import { getFlashCardsApi } from "~/api/FlashCard";
 import { useState } from "react";
 import { Lesson } from "~/type";
+import Blog from "~/components/Blog";
 
 function Header() {
   const dispatch = useDispatch();
@@ -124,10 +125,7 @@ function Header() {
             <FontAwesomeIcon className="pr-2" icon={faFolder} />
             Folder
           </p>
-          <p className="text-start px-4 py-2 text-gray-600 cursor-pointer hover:bg-gray-300">
-            <FontAwesomeIcon className="pr-2" icon={faPaste} />
-            Study sets
-          </p>
+          <Blog />
         </div>
       </div>
 
